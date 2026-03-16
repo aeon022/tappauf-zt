@@ -1,0 +1,86 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  email: string;
+  phone: string;
+  address: string;
+  mapEmbed: string;
+  mapLink: string;
+  companyDetails?: string;
+  detailed?: boolean;
+}
+
+const {
+  title,
+  description,
+  email,
+  phone,
+  address,
+  mapEmbed,
+  mapLink,
+  companyDetails,
+  detailed = false,
+} = Astro.props;
+
+const phoneHref = `tel:${phone.replace(/[^+\d]/g, '')}`;
+---
+
+<section class="mx-auto max-w-7xl px-6 py-20 lg:px-8">
+  <div class="rounded-[2.5rem] bg-slate-100/90 p-8 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:p-12" data-reveal>
+    <div class:list={['grid gap-10 lg:items-stretch', detailed ? 'lg:grid-cols-[0.96fr_1.04fr]' : 'lg:grid-cols-[0.98fr_1.02fr]']}>
+      <div class="flex flex-col justify-between">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">Kontakt</p>
+        <h2 class="mt-4 font-display text-4xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-5xl">{title}</h2>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-700">{description}</p>
+
+        <div class="mt-8 rounded-[1.75rem] bg-white p-7 shadow-sm sm:p-8">
+          <p class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Firmenkontakt</p>
+
+          <div class="mt-6 grid gap-6 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Telefon</p>
+              <a href={phoneHref} class="mt-2 block text-base font-medium text-slate-950 transition hover:text-blue-600">{phone}</a>
+              <p class="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">E-Mail</p>
+              <a href={`mailto:${email}`} class="mt-2 block text-base font-semibold text-blue-600 transition hover:text-slate-950 break-all">{email}</a>
+            </div>
+
+            {companyDetails && (
+              <div class="sm:col-span-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Unternehmen</p>
+                <p class="mt-2 text-sm leading-7 whitespace-pre-line text-slate-600">{companyDetails}</p>
+              </div>
+            )}
+
+            {!companyDetails && (
+              <div class="sm:col-span-2">
+                <p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Adresse</p>
+                <p class="mt-2 text-sm leading-7 whitespace-pre-line text-slate-600">{address}</p>
+              </div>
+            )}
+          </div>
+
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm" data-reveal>
+        {detailed && (
+          <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Standort Graz</p>
+            <p class="mt-1 text-sm text-slate-600">{address.split('\n').join(', ')}</p>
+          </div>
+        )}
+        <iframe
+          src={mapEmbed}
+          title={`Google Map ${title}`}
+          class:list={[
+            'block w-full border-0 grayscale-[0.15] contrast-[1.05] saturate-[0.85]',
+            detailed ? 'min-h-[33rem]' : 'h-full min-h-[27rem]',
+          ]}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>

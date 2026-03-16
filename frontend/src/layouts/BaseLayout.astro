@@ -1,13 +1,89 @@
 ---
 // Dateipfad: frontend/src/layouts/BaseLayout.astro
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
+  canonicalPath?: string;
+  ogImage?: string | { src: string; width?: number; height?: number };
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  structuredData?: Record<string, any> | Record<string, any>[];
 }
-const { title, description = "Tappauf ZT - Ingenieurbüro für Tragwerksplanung & Baudynamik" } = Astro.props;
+const settings = await getEntry('settings', 'global');
+const {
+  title,
+  description = settings?.data.metaDescription || "Tappauf ZT - Ingenieurbüro für Tragwerksplanung & Baudynamik",
+  canonicalPath,
+  ogImage,
+  ogType = 'website',
+  noindex = false,
+  structuredData = [],
+} = Astro.props;
+const footerPhoneHref = `tel:${(settings?.data.phone || '').replace(/[^+\d]/g, '')}`;
+const socialLinks = [
+  { label: 'Facebook', href: settings?.data.facebook },
+  { label: 'X', href: settings?.data.x },
+  { label: 'Instagram', href: settings?.data.instagram },
+  { label: 'TikTok', href: settings?.data.tiktok },
+  { label: 'LinkedIn', href: settings?.data.linkedin },
+  { label: 'YouTube', href: settings?.data.youtube },
+].filter((item) => item.href);
+const seoBase = Astro.site ?? Astro.url;
+const canonicalUrl = new URL(canonicalPath || Astro.url.pathname, seoBase).toString();
+const brandImage = settings?.data.logo?.src ? new URL(settings.data.logo.src, seoBase).toString() : undefined;
+const resolvedOgImage =
+  typeof ogImage === 'string'
+    ? new URL(ogImage, seoBase).toString()
+    : ogImage?.src
+      ? new URL(ogImage.src, seoBase).toString()
+      : brandImage
+        ? brandImage
+        : undefined;
+const ogImageWidth = typeof ogImage === 'object' ? ogImage.width : settings?.data.logo?.width;
+const ogImageHeight = typeof ogImage === 'object' ? ogImage.height : settings?.data.logo?.height;
+const organizationData = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: settings?.data.siteTitle,
+  url: Astro.site?.toString() || canonicalUrl,
+  logo: brandImage,
+  image: brandImage,
+  description: settings?.data.siteDescription,
+  email: settings?.data.email,
+  telephone: settings?.data.phone,
+  address: settings?.data.address
+    ? {
+        '@type': 'PostalAddress',
+        streetAddress: settings.data.address.split('\n')[0],
+        addressLocality: 'Graz',
+        postalCode: '8010',
+        addressCountry: 'AT',
+      }
+    : undefined,
+  sameAs: socialLinks.map((item) => item.href),
+};
+const websiteData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: settings?.data.siteTitle,
+  url: Astro.site?.toString() || canonicalUrl,
+  inLanguage: 'de-AT',
+};
+const pageData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  url: canonicalUrl,
+  description,
+  inLanguage: 'de-AT',
+};
+const extraStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
+const structuredDataPayload = [organizationData, websiteData, pageData, ...extraStructuredData].filter(Boolean);
 ---
 <html lang="de">
   <head>
@@ -15,37 +91,131 @@ const { title, description = "Tappauf ZT - Ingenieurbüro für Tragwerksplanung 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="color-scheme" content="light dark" />
+    <meta property="og:locale" content="de_AT" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={settings?.data.siteTitle || 'Tappauf ZT GmbH'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {resolvedOgImage && <meta property="og:image" content={resolvedOgImage} />}
+    {ogImageWidth && <meta property="og:image:width" content={String(ogImageWidth)} />}
+    {ogImageHeight && <meta property="og:image:height" content={String(ogImageHeight)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {resolvedOgImage && <meta name="twitter:image" content={resolvedOgImage} />}
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredDataPayload)} />
+    <script is:inline>
+      (() => {
+        const key = 'tappauf-theme';
+        const root = document.documentElement;
+
+        const getPreferredTheme = () =>
+          window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+        const getStoredTheme = () => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            return null;
+          }
+        };
+
+        const applyTheme = (theme) => {
+          root.dataset.theme = theme;
+          root.classList.toggle('dark', theme === 'dark');
+        };
+
+        applyTheme(getStoredTheme() || getPreferredTheme());
+      })();
+    </script>
     <ClientRouter />
   </head>
   <body class="bg-white text-slate-900 antialiased font-sans selection:bg-blue-100">
-    <div class="fixed inset-0 grid grid-cols-4 md:grid-cols-12 gap-4 px-4 pointer-events-none opacity-[0.03] -z-10" aria-hidden="true">
-      {Array.from({ length: 12 }).map(() => <div class="bg-slate-900 h-full border-x border-slate-900"></div>)}
+    <div class="site-pattern" aria-hidden="true">
+      <div class="site-pattern__grid"></div>
+      <div class="site-pattern__pulse site-pattern__pulse--one"></div>
+      <div class="site-pattern__pulse site-pattern__pulse--two"></div>
     </div>
 
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <a href="/" class="text-xl font-black tracking-tighter uppercase italic group">
-          Tappauf<span class="text-blue-600 group-hover:text-slate-900 transition-colors">.ZT</span>
+        <a href="/" class="font-display text-xl font-semibold tracking-[-0.02em] uppercase group" transition:name="brand">
+          {settings?.data.logo ? (
+            <Image
+              src={settings.data.logo}
+              alt={settings?.data.logoAlt || settings?.data.siteTitle || 'Logo'}
+              class="site-logo site-logo--header h-10 w-auto object-contain"
+              loading="eager"
+              decoding="async"
+            />
+          ) : (
+            <>Tappauf<span class="text-blue-600 group-hover:text-slate-900 transition-colors">.ZT</span></>
+          )}
         </a>
         <div class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em]">
           <a href="/leistungen" class="hover:text-blue-600 transition-colors">Leistungen</a>
           <a href="/projekte" class="hover:text-blue-600 transition-colors">Referenzen</a>
+          <a href="/publikationen" class="hover:text-blue-600 transition-colors">Publikationen</a>
           <a href="/team" class="hover:text-blue-600 transition-colors">Team</a>
           <a href="/jobs" class="hover:text-blue-600 transition-colors">Jobs</a>
+          <a href="/kontakt" class="hover:text-blue-600 transition-colors">Kontakt</a>
         </div>
-        <a href="/kontakt" class="bg-slate-900 text-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-blue-600 transition-all">Anfrage</a>
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="theme-toggle hidden sm:inline-flex"
+            data-theme-toggle
+            aria-label="Farbschema wechseln"
+            title="Farbschema wechseln"
+          >
+            <span class="theme-toggle__icon" aria-hidden="true">◐</span>
+            <span class="theme-toggle__label">Dark</span>
+          </button>
+          <a href="/kontakt" class="bg-slate-900 text-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-blue-600 transition-all">Anfrage</a>
+        </div>
       </div>
     </nav>
 
-    <slot />
+    <div transition:name="page-shell">
+      <slot />
+    </div>
 
-    <footer class="bg-slate-950 text-white pt-24 pb-12 mt-20">
+    <footer class="bg-slate-800 text-white pt-24 pb-12 mt-20">
       <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-white/10 pb-20">
         <div class="col-span-2">
-          <div class="text-2xl font-black italic uppercase tracking-tighter mb-6">Tappauf.ZT</div>
+          <div class="mb-6">
+            {settings?.data.logo ? (
+              <Image
+                src={settings.data.logo}
+                alt={settings?.data.logoAlt || settings?.data.siteTitle || 'Logo'}
+                class="site-logo site-logo--footer h-12 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <div class="font-display text-2xl font-semibold uppercase tracking-[-0.02em]">{settings?.data.siteTitle}</div>
+            )}
+          </div>
           <p class="text-slate-400 max-w-sm leading-relaxed text-sm">
-            Staatlich befugte und beeidete Ziviltechniker für Bauwesen. Spezialisiert auf komplexe Tragwerke und Baudynamik.
+            {settings?.data.siteDescription}
           </p>
+          {socialLinks.length > 0 && (
+            <div class="mt-6 flex flex-wrap gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              {socialLinks.map((item) => (
+                <a href={item.href} target="_blank" rel="noreferrer" class="hover:text-white">{item.label}</a>
+              ))}
+            </div>
+          )}
         </div>
         <div>
           <h4 class="text-xs font-mono uppercase text-blue-500 mb-6">Navigation</h4>
@@ -53,11 +223,17 @@ const { title, description = "Tappauf ZT - Ingenieurbüro für Tragwerksplanung 
             <li><a href="/projekte" class="hover:text-blue-500">Referenzen</a></li>
             <li><a href="/leistungen" class="hover:text-blue-500">Leistungen</a></li>
             <li><a href="/publikationen" class="hover:text-blue-500">Publikationen</a></li>
+            <li><a href="/jobs" class="hover:text-blue-500">Jobs</a></li>
+            <li><a href="/kontakt" class="hover:text-blue-500">Kontakt</a></li>
           </ul>
         </div>
         <div>
           <h4 class="text-xs font-mono uppercase text-blue-500 mb-6">Kontakt</h4>
-          <p class="text-sm text-slate-400">Graz, Österreich<br/>office@tappauf-zt.at</p>
+          <div class="space-y-5 text-sm text-slate-400">
+            <p class="whitespace-pre-line">{settings?.data.address}</p>
+            <a href={`mailto:${settings?.data.email}`} class="block transition hover:text-white">{settings?.data.email}</a>
+            <a href={footerPhoneHref} class="block transition hover:text-white">{settings?.data.phone}</a>
+          </div>
         </div>
       </div>
       <div class="max-w-7xl mx-auto px-6 pt-12 flex justify-between text-[10px] font-mono text-slate-500 uppercase tracking-widest">
@@ -68,5 +244,89 @@ const { title, description = "Tappauf ZT - Ingenieurbüro für Tragwerksplanung 
         </div>
       </div>
     </footer>
+
+    <script is:inline>
+      const THEME_STORAGE_KEY = 'tappauf-theme';
+
+      const getPreferredTheme = () =>
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+      const getStoredTheme = () => {
+        try {
+          return localStorage.getItem(THEME_STORAGE_KEY);
+        } catch {
+          return null;
+        }
+      };
+
+      const persistTheme = (theme) => {
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, theme);
+        } catch {}
+      };
+
+      const applyTheme = (theme) => {
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.classList.toggle('dark', theme === 'dark');
+
+        document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+          const label = button.querySelector('.theme-toggle__label');
+          if (label) label.textContent = theme === 'dark' ? 'Light' : 'Dark';
+          button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        });
+      };
+
+      const setupThemeToggle = () => {
+        const root = document.documentElement;
+        const buttons = document.querySelectorAll('[data-theme-toggle]');
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+
+        applyTheme(getStoredTheme() || root.dataset.theme || getPreferredTheme());
+
+        buttons.forEach((button) => {
+          if (button.dataset.themeBound === 'true') return;
+          button.dataset.themeBound = 'true';
+
+          button.addEventListener('click', () => {
+            const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+            persistTheme(next);
+            applyTheme(next);
+          });
+        });
+
+        if (!window.__tappaufThemeMediaBound) {
+          media.addEventListener('change', (event) => {
+            if (getStoredTheme()) return;
+            applyTheme(event.matches ? 'dark' : 'light');
+          });
+          window.__tappaufThemeMediaBound = true;
+        }
+      };
+
+      const setupReveal = () => {
+        const items = document.querySelectorAll('[data-reveal]');
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-revealed');
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+        );
+
+        items.forEach((item, index) => {
+          item.style.setProperty('--reveal-delay', `${index % 6 * 70}ms`);
+          observer.observe(item);
+        });
+      };
+
+      setupThemeToggle();
+      setupReveal();
+      document.addEventListener('astro:page-load', setupThemeToggle);
+      document.addEventListener('astro:page-load', setupReveal);
+    </script>
   </body>
 </html>

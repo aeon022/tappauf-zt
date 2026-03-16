@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import MetaList from '../../components/ui/MetaList.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+
+const jobs = (await getCollection('jobs'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .filter((job) => job.data.status === 'aktiv');
+
+const singleJob = jobs.length === 1 ? jobs[0] : null;
+const singleJobRender = singleJob ? await render(singleJob) : null;
+---
+
+<BaseLayout
+  title="Jobs in Tragwerksplanung und Baudynamik | Tappauf ZT"
+  description="Aktuelle Jobs in Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau bei Tappauf ZT in Graz."
+>
+  <main class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-6xl px-6 lg:px-8">
+      <PageIntro eyebrow="Jobs" title="Offene Positionen." text="Aktuelle Einstiegsmöglichkeiten für Tragwerksplanung, Baudynamik und konstruktiven Ingenieurbau in Graz." />
+
+      {jobs.length === 1 && singleJob && singleJobRender ? (
+        <section class="mt-12 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+          <MetaList
+            title="Rahmendaten"
+            items={[
+              { label: 'Status', value: singleJob.data.status },
+              { label: 'Standort', value: singleJob.data.location },
+              { label: 'Arbeitszeit', value: singleJob.data.workload },
+              { label: 'Anstellungsart', value: singleJob.data.employmentType },
+              { label: 'Bewerbung', value: singleJob.data.applyEmail, href: singleJob.data.applyEmail ? `mailto:${singleJob.data.applyEmail}` : undefined },
+            ]}
+          />
+
+          <div data-reveal>
+            <h2 class="text-3xl font-semibold tracking-[-0.02em] text-slate-950">{singleJob.data.title}</h2>
+            {singleJob.data.summary && <p class="mt-4 text-lg leading-8 text-slate-600">{singleJob.data.summary}</p>}
+            <div class="jobs-content prose prose-slate prose-lg mt-8 max-w-none">
+              <singleJobRender.Content />
+            </div>
+          </div>
+        </section>
+      ) : (
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {jobs.map((job) => (
+            <a href={`/jobs/${job.id}`} class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" data-reveal>
+              <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">{job.data.status}</p>
+              <h2 class="mt-4 text-3xl font-semibold tracking-[-0.02em] text-slate-950">{job.data.title}</h2>
+              {job.data.summary && <p class="mt-4 text-sm leading-7 text-slate-600">{job.data.summary}</p>}
+              <p class="mt-6 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Details ansehen</p>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,98 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+
+const settings = await getEntry('settings', 'global');
+const phoneHref = `tel:${(settings?.data.phone || '').replace(/[^+\d]/g, '')}`;
+---
+
+<BaseLayout title="Datenschutz | Tappauf ZT" description="Datenschutzhinweise fuer den Webauftritt der Tappauf ZT GmbH." noindex={true}>
+  <main class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-5xl px-6 lg:px-8">
+      <PageIntro
+        eyebrow="Rechtliches"
+        title="Datenschutz"
+        text="Diese Hinweise beschreiben, welche personenbezogenen Daten beim Besuch dieser Website verarbeitet werden und welche Rechte betroffene Personen haben."
+      />
+
+      <div class="mt-12 space-y-6">
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">1. Verantwortlicher</h2>
+          <div class="mt-5 space-y-3 text-base leading-8 text-slate-700">
+            <p>{settings?.data.siteTitle}</p>
+            <p class="whitespace-pre-line">{settings?.data.address}</p>
+            <p>
+              E-Mail:
+              <a href={`mailto:${settings?.data.email}`} class="ml-2 font-semibold text-blue-600 transition hover:text-slate-950">{settings?.data.email}</a>
+            </p>
+            <p>
+              Telefon:
+              <a href={phoneHref} class="ml-2 font-semibold text-blue-600 transition hover:text-slate-950">{settings?.data.phone}</a>
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">2. Zugriffsdaten und Hosting</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Diese Website wird bei der World4You Internet Services GmbH, Hafenstrasse 35, 4020 Linz, Oesterreich, gehostet.
+              Beim Aufruf der Website koennen technisch notwendige Daten verarbeitet werden, insbesondere IP-Adresse, Datum und
+              Uhrzeit des Zugriffs, aufgerufene Inhalte, Browsertyp, Betriebssystem und technische Informationen zum Zugriff.
+            </p>
+            <p>
+              Die Verarbeitung erfolgt zur Bereitstellung, Stabilitaet und Sicherheit des Webauftritts. Mit dem Hosting-Anbieter
+              besteht ein Vertrag zur Auftragsverarbeitung gemaess Art. 28 DSGVO.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">3. Externe Dienste</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Diese Website verwendet Google Fonts zur Darstellung von Schriftarten. Beim Laden der Website kann dabei eine
+              Verbindung zu Servern von Google hergestellt werden.
+            </p>
+            <p>
+              Auf den Kontaktbereichen ist ausserdem eine eingebettete Google-Maps-Karte vorhanden. Beim Aufruf dieser Karte
+              kann Google personenbezogene Daten, insbesondere die IP-Adresse und technische Nutzungsdaten, verarbeiten.
+            </p>
+            <p>
+              Analyse-, Tracking- oder Marketing-Tools werden auf dieser Website derzeit nicht eingesetzt. Ebenso wird kein
+              externer Datenschutz- oder Cookie-Generator auf der Website ausgefuehrt.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">4. Kontaktaufnahme</h2>
+          <p class="mt-5 text-base leading-8 text-slate-700">
+            Wenn Sie per E-Mail oder telefonisch Kontakt aufnehmen, werden die von Ihnen uebermittelten Daten zur Bearbeitung
+            Ihrer Anfrage und fuer moegliche Anschlussfragen verarbeitet. Eine Weitergabe erfolgt nur, soweit dies zur
+            Bearbeitung erforderlich ist oder eine rechtliche Verpflichtung besteht.
+          </p>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">5. Rechte betroffener Personen</h2>
+          <p class="mt-5 text-base leading-8 text-slate-700">
+            Betroffene Personen haben grundsaetzlich das Recht auf Auskunft, Berichtigung, Loeschung, Einschraenkung der
+            Verarbeitung, Datenuebertragbarkeit sowie Widerspruch gegen die Verarbeitung ihrer Daten. Wenn Sie der Ansicht
+            sind, dass die Verarbeitung Ihrer Daten gegen Datenschutzrecht verstoesst, koennen Sie sich an die zustaendige
+            Datenschutzbehoerde wenden.
+          </p>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">6. Aktualisierung</h2>
+          <p class="mt-5 text-base leading-8 text-slate-700">
+            Diese Datenschutzhinweise koennen aktualisiert werden, wenn sich rechtliche Anforderungen oder die auf dieser
+            Website eingesetzten Funktionen aendern.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

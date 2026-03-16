@@ -1,8 +1,8 @@
 ---
-// Beispiel für: frontend/src/pages/projekte/[slug].astro
-// (Für Leistungen/Jobs einfach 'references' durch die jeweilige Collection ersetzen)
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('services');
@@ -15,46 +15,56 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
-<BaseLayout title={`${entry.data.title} | Tappauf ZT`}>
-  <article class="pt-32 pb-24">
-    <div class="max-w-7xl mx-auto px-6">
-      <header class="max-w-3xl mb-20">
-        <div class="text-blue-600 font-mono text-xs uppercase tracking-[0.3em] mb-8">
-          Projekt-Dokumentation // {entry.data.year || '2026'}
-        </div>
-        <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 uppercase italic mb-10 leading-[0.9]">
-          {entry.data.title}
-        </h1>
-        <div class="h-1 w-20 bg-blue-600"></div>
-      </header>
+<BaseLayout
+  title={`${entry.data.title} | Tragwerksplanung | Tappauf ZT`}
+  description={`${entry.data.title}: ${entry.data.summary}`}
+  ogImage={entry.data.image}
+>
+  <article class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <PageIntro eyebrow="Leistungsfeld" title={entry.data.title} text={entry.data.summary} />
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
-        <aside class="lg:col-span-4 order-2 lg:order-1">
-          <div class="sticky top-32 space-y-12 border-t border-slate-100 pt-12">
-            <div>
-              <h4 class="text-[10px] font-mono uppercase text-slate-400 tracking-widest mb-4">Parameter</h4>
-              <dl class="space-y-4 text-sm">
-                <div>
-                  <dt class="text-slate-400">Auftraggeber:</dt>
-                  <dd class="font-bold">{entry.data.client || 'Wird nachgetragen'}</dd>
-                </div>
-                <div>
-                  <dt class="text-slate-400">Kategorie:</dt>
-                  <dd class="font-bold uppercase tracking-tighter">{entry.data.category || 'Statik'}</dd>
-                </div>
-              </dl>
+      <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
+        <main class="space-y-8" data-reveal>
+          {entry.data.image && (
+            <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+              <Image src={entry.data.image} alt={entry.data.title} class="h-full w-full object-cover" />
+            </div>
+          )}
+
+          <div class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Leistungsbeschreibung</h2>
+            <div class="prose prose-slate prose-lg mt-6 max-w-none prose-headings:text-slate-900 prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-slate-600 prose-strong:text-slate-900 prose-strong:font-bold">
+              <Content />
             </div>
           </div>
-        </aside>
-
-        <main class="lg:col-span-8 order-1 lg:order-2">
-          <div class="prose prose-slate prose-lg max-w-none 
-            prose-headings:text-slate-900 prose-headings:italic prose-headings:uppercase prose-headings:tracking-tighter
-            prose-p:leading-relaxed prose-p:text-slate-600
-            prose-strong:text-slate-900 prose-strong:font-bold">
-            <Content />
-          </div>
         </main>
+
+        <aside class="space-y-6" data-reveal>
+          <div class="rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_24px_60px_rgba(2,6,23,0.18)]">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.25em] text-blue-300">Schwerpunkte</h2>
+            <ul class="mt-6 space-y-4">
+              {entry.data.items.map((item, index) => (
+                <li class="flex gap-4 border-t border-white/10 pt-4 first:border-t-0 first:pt-0">
+                  <span class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-blue-400/40 text-xs font-semibold text-blue-200">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span class="text-sm leading-7 text-slate-200">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Naechster Schritt</h2>
+            <p class="mt-4 text-sm leading-7 text-slate-600">
+              Fuer Rueckfragen zu diesem Leistungsfeld oder zur Projektanfrage stehen wir direkt zur Verfuegung.
+            </p>
+            <a href="/kontakt" class="mt-6 inline-flex rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-950">
+              Kontakt aufnehmen
+            </a>
+          </div>
+        </aside>
       </div>
     </div>
   </article>

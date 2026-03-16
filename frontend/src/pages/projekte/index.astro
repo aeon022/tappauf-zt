@@ -1,45 +1,34 @@
 ---
-// Dateipfad: frontend/src/pages/projekte/index.astro
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ReferenceCard from '../../components/blocks/ReferenceCard.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
 
-// Hol die 41 Projekte aus der neuen Astro 5 Collection
 const allProjects = await getCollection('references');
-
-// Sortierung: Erst die echten Projekte, dann die Timeline-Exporte
-const sortedProjects = allProjects.sort((a, b) => {
-  if (a.id.includes('ref') && !b.id.includes('ref')) return 1;
-  if (!a.id.includes('ref') && b.id.includes('ref')) return -1;
-  return 0;
-});
+const sortedProjects = allProjects.sort((a, b) => a.data.order - b.data.order);
 ---
 
-<BaseLayout title="Referenzen & Projekte | Tappauf ZT">
-  <main class="py-24 sm:py-32">
+<BaseLayout
+  title="Referenzen im Hochbau, Industriebau und Brueckenbau | Tappauf ZT"
+  description="Ausgewaehlte Referenzen aus Hochbau, Industriebau, Brueckenbau und Spezialaufgaben mit Fokus auf Tragwerksplanung und Baudynamik."
+>
+  <main class="references-index bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      
-      <div class="mx-auto max-w-2xl lg:mx-0">
-        <h1 class="text-base font-mono font-semibold leading-7 text-blue-600 uppercase tracking-widest">
-          Portfolio
-        </h1>
-        <p class="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">
-          Referenzen
-        </p>
-        <p class="mt-6 text-lg leading-8 text-slate-600">
-          Eine Übersicht unserer Leistungen in der Tragwerksplanung und Baudynamik – extrahiert aus über 15 Jahren Projekterfahrung.
-        </p>
-      </div>
+      <PageIntro
+        eyebrow="Portfolio"
+        title="Referenzen"
+        text="Ausgewaehlte Projekte aus Hochbau, Industriebau, Brueckenbau und Spezialaufgaben mit Fokus auf Tragwerksplanung und Baudynamik."
+      />
 
-      <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-12 gap-y-16 border-t border-slate-200 pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         {sortedProjects.map((project) => (
           <ReferenceCard project={project} />
         ))}
       </div>
 
       {sortedProjects.length === 0 && (
-        <div class="text-center py-20 border-2 border-dashed border-slate-200 rounded-xl">
-          <p class="text-slate-500 font-mono">Keine Projekte in src/content/references gefunden.</p>
+        <div class="rounded-xl border-2 border-dashed border-slate-300 py-20 text-center">
+          <p class="font-mono text-slate-500">Keine Projekte in `src/content/references/entries` gefunden.</p>
         </div>
       )}
     </div>

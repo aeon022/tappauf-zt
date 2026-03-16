@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PublicationList from '../../components/blocks/PublicationList.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+
+const publications = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year || a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Publikationen zu Tragwerksplanung und Baudynamik | Tappauf ZT"
+  description="Fachbeitraege, wissenschaftliche Arbeiten und technische Publikationen zu Tragwerksplanung, Baudynamik und Erschuetterungsschutz."
+>
+  <main class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <PageIntro
+        eyebrow="Publikationen"
+        title="Fachbeitraege und wissenschaftliche Arbeiten."
+        text="Fachbeiträge, Veröffentlichungen und technische Texte aus dem Umfeld von Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau."
+      />
+      <PublicationList publications={publications} />
+    </div>
+  </main>
+</BaseLayout>

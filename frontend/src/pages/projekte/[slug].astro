@@ -1,12 +1,15 @@
 ---
-// Beispiel für: frontend/src/pages/projekte/[slug].astro
-// (Für Leistungen/Jobs einfach 'references' durch die jeweilige Collection ersetzen)
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import MetaList from '../../components/ui/MetaList.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('references');
-  return entries.map(entry => ({
+  return entries
+    .filter((entry) => typeof entry.body === 'string' && entry.body.trim().length > 0)
+    .map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
   }));
@@ -15,43 +18,37 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
-<BaseLayout title={`${entry.data.title} | Tappauf ZT`}>
-  <article class="pt-32 pb-24">
-    <div class="max-w-7xl mx-auto px-6">
-      <header class="max-w-3xl mb-20">
-        <div class="text-blue-600 font-mono text-xs uppercase tracking-[0.3em] mb-8">
-          Projekt-Dokumentation // {entry.data.year || '2026'}
-        </div>
-        <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-slate-900 uppercase italic mb-10 leading-[0.9]">
-          {entry.data.title}
-        </h1>
-        <div class="h-1 w-20 bg-blue-600"></div>
-      </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
-        <aside class="lg:col-span-4 order-2 lg:order-1">
-          <div class="sticky top-32 space-y-12 border-t border-slate-100 pt-12">
-            <div>
-              <h4 class="text-[10px] font-mono uppercase text-slate-400 tracking-widest mb-4">Parameter</h4>
-              <dl class="space-y-4 text-sm">
-                <div>
-                  <dt class="text-slate-400">Auftraggeber:</dt>
-                  <dd class="font-bold">{entry.data.client || 'Wird nachgetragen'}</dd>
-                </div>
-                <div>
-                  <dt class="text-slate-400">Kategorie:</dt>
-                  <dd class="font-bold uppercase tracking-tighter">{entry.data.category || 'Statik'}</dd>
-                </div>
-              </dl>
+<BaseLayout
+  title={`${entry.data.title} | Referenz | Tappauf ZT`}
+  description={`${entry.data.title}: ${entry.data.details}${entry.data.category ? `, ${entry.data.category}` : ''}.`}
+  ogImage={entry.data.heroImage}
+  ogType="article"
+>
+  <article class="reference-detail py-20 sm:py-28">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <PageIntro eyebrow="Referenz" title={entry.data.title} text={entry.data.details} />
+
+      <div class="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+        <aside class="space-y-6">
+          {entry.data.heroImage && (
+            <div class="reference-detail__media overflow-hidden rounded-[2rem] border" data-reveal>
+              <Image src={entry.data.heroImage} alt={entry.data.title} class="h-full w-full object-cover" />
             </div>
-          </div>
+          )}
+          <MetaList
+            title="Projektdaten"
+            items={[
+              { label: 'Details', value: entry.data.details },
+              { label: 'Auftraggeber', value: entry.data.client },
+              { label: 'Kategorie', value: entry.data.category },
+              { label: 'Jahr', value: entry.data.year ? String(entry.data.year) : undefined },
+            ]}
+          />
         </aside>
 
-        <main class="lg:col-span-8 order-1 lg:order-2">
-          <div class="prose prose-slate prose-lg max-w-none 
-            prose-headings:text-slate-900 prose-headings:italic prose-headings:uppercase prose-headings:tracking-tighter
-            prose-p:leading-relaxed prose-p:text-slate-600
-            prose-strong:text-slate-900 prose-strong:font-bold">
+        <main data-reveal>
+          <div class="reference-detail__prose prose prose-lg max-w-none">
             <Content />
           </div>
         </main>

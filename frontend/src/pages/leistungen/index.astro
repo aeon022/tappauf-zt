@@ -1,0 +1,20 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+import ServiceGrid from '../../components/blocks/ServiceGrid.astro';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Leistungen für Tragwerksplanung und Baudynamik | Tappauf ZT"
+  description="Leistungsfelder für Hochbau, Industriebau, Baudynamik, Glas- und Fassadenbau sowie Sonderaufgaben im konstruktiven Ingenieurbau."
+>
+  <main class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <PageIntro eyebrow="Leistungen" title="Tragwerksplanung mit Tiefe." text="Leistungsfelder für Hochbau, Industriebau, Baudynamik, Glas- und Fassadenbau sowie Sonderaufgaben." />
+      <ServiceGrid services={services} />
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  text?: string;
+  inverse?: boolean;
+}
+
+const { eyebrow, title, text, inverse = false } = Astro.props;
+---
+
+<div class="max-w-3xl" data-reveal>
+  <p class:list={['text-xs font-semibold uppercase tracking-[0.35em]', inverse ? 'text-blue-300' : 'text-blue-600']}>{eyebrow}</p>
+  <h2 class:list={['mt-4 font-display text-4xl font-semibold tracking-[-0.03em] sm:text-5xl', inverse ? 'text-white' : 'text-slate-950']}>{title}</h2>
+  {text && <p class:list={['mt-6 text-lg leading-8', inverse ? 'text-slate-300' : 'text-slate-600']}>{text}</p>}
+</div>

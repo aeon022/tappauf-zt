@@ -1,17 +1,147 @@
 ---
+import { getCollection, getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroBlock from '../components/blocks/HeroBlock.astro';
+import ContactBlock from '../components/blocks/ContactBlock.astro';
+import PartnerLogoSlider from '../components/blocks/PartnerLogoSlider.astro';
+import ReferencePreviewGrid from '../components/blocks/ReferencePreviewGrid.astro';
+import ServiceGrid from '../components/blocks/ServiceGrid.astro';
+import TeamGrid from '../components/blocks/TeamGrid.astro';
+import SectionHeader from '../components/ui/SectionHeader.astro';
+import adlerImage from '../assets/references/Adler.png';
 
+const home = await getEntry('home', 'startseite');
+const settings = await getEntry('settings', 'global');
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+const references = (await getCollection('references')).sort((a, b) => a.data.order - b.data.order);
+const partners = (await getCollection('partners')).sort((a, b) => a.data.order - b.data.order);
+
+const featuredServices = services.slice(0, 6);
+const featuredTeam = team.slice(0, 4);
+const featuredReferences = references.slice(0, 8);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title={`${settings?.data.siteTitle} | Tragwerksplanung und Baudynamik in Graz`}
+  description={settings?.data.metaDescription}
+  ogImage={home?.data.heroImage}
+>
+  <main transition:name="page">
+    <HeroBlock
+      eyebrow={home?.data.heroEyebrow || ''}
+      headline={home?.data.heroHeadline || ''}
+      text={home?.data.heroText || ''}
+      image={home?.data.heroImage}
+      imageAlt={home?.data.heroImageAlt}
+      primaryLabel={home?.data.heroPrimaryLabel || ''}
+      primaryHref={home?.data.heroPrimaryHref || '/leistungen'}
+      secondaryLabel={home?.data.heroSecondaryLabel || ''}
+      secondaryHref={home?.data.heroSecondaryHref || '/projekte'}
+      metrics={[
+        { value: '30+', label: 'Jahre Erfahrung' },
+        { value: String(services.length), label: 'Leistungsfelder' },
+      ]}
+    />
+
+    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-30">
+      <div class="rounded-[2.75rem] border border-slate-200/80 bg-white/92 px-8 py-10 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur sm:px-10 sm:py-12 lg:px-14 lg:py-16" data-reveal>
+        <div class="grid gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
+          <div class="min-w-0 max-w-2xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">{home?.data.aboutTitle || 'Über uns'}</p>
+            <h2 class="mt-4 max-w-[9.5em] font-display text-[2.35rem] font-semibold leading-[1.02] tracking-[-0.03em] text-slate-950 sm:text-[2.8rem]">
+              International erfahren, technisch präzise.
+            </h2>
+            <p class="mt-8 max-w-[34rem] text-lg leading-9 text-slate-700">{home?.data.aboutText}</p>
+
+            <div class="mt-10 flex items-center gap-5 border-t border-slate-200 pt-8">
+              <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/90 p-4">
+                <Image
+                  src={adlerImage}
+                  alt="Adler Referenzmotiv der Originalseite"
+                  class="h-auto w-20 object-contain"
+                  loading="lazy"
+                />
+              </div>
+              <p class="max-w-sm text-sm leading-7 text-slate-500">
+                Anspruchsvolle Hochbauten, Industrieanlagen und dynamisch beanspruchte Tragwerke mit internationalem Projektfokus.
+              </p>
+            </div>
+          </div>
+
+          <div class="relative min-w-0 lg:pl-10">
+            <div class="absolute left-0 top-1 hidden h-full w-px bg-gradient-to-b from-slate-200 via-slate-300 to-transparent lg:block"></div>
+
+            <div class="min-w-0">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">{home?.data.profileTitle || 'Profil'}</p>
+              <h3 class="mt-4 max-w-[12em] font-display text-[2.25rem] font-semibold leading-[1.04] tracking-[-0.03em] text-slate-950 sm:text-[2.65rem]">
+                {home?.data.profileHeadline || ''}
+              </h3>
+            </div>
+
+            <div class="mt-10 space-y-8">
+              <div class="border-b border-slate-200 pb-8">
+                <p class="max-w-[18rem] text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">{home?.data.approachTitle}</p>
+                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-700">{home?.data.approachText}</p>
+              </div>
+
+              <div>
+                <p class="max-w-[18rem] text-sm font-semibold uppercase tracking-[0.25em] text-slate-950">{home?.data.insuranceTitle}</p>
+                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-700">{home?.data.insuranceText}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-24 lg:py-28">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <SectionHeader eyebrow="Leistungen" title="Planung in klaren Leistungsbausteinen." />
+          <a href="/leistungen" class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-950 transition hover:text-blue-600" data-reveal>Alle Leistungen</a>
+        </div>
+        <ServiceGrid services={featuredServices} itemLimit={3} />
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-28">
+      <SectionHeader
+        eyebrow="Netzwerk"
+        title={home?.data.partnersTitle || 'Auftraggeber & Partner'}
+        text={home?.data.partnersText}
+      />
+      <PartnerLogoSlider partners={partners} />
+    </section>
+
+    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-28">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <SectionHeader eyebrow="Team" title="Menschen mit Verantwortung." />
+        <a href="/team" class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-950 transition hover:text-blue-600" data-reveal>Gesamtes Team</a>
+      </div>
+      <TeamGrid team={featuredTeam} dark={true} />
+    </section>
+
+    <section class="bg-slate-800 py-24 text-white lg:py-28">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <SectionHeader eyebrow="Referenzen" title={home?.data.referencesTitle || ''} text={home?.data.referencesText} inverse={true} />
+        <ReferencePreviewGrid references={featuredReferences} />
+        <div class="mt-10">
+          <a href="/projekte" class="inline-flex rounded-full border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/50 hover:bg-white/5" data-reveal>Alle Referenzen</a>
+        </div>
+      </div>
+    </section>
+
+    <ContactBlock
+      title={settings?.data.siteTitle || ''}
+      description={settings?.data.siteDescription || ''}
+      email={settings?.data.email || ''}
+      phone={settings?.data.phone || ''}
+      address={settings?.data.address || ''}
+      mapEmbed={settings?.data.googleMapsEmbed || ''}
+      mapLink={settings?.data.googleMapsLink || ''}
+      companyDetails={settings?.data.companyDetails || ''}
+    />
+  </main>
+</BaseLayout>

@@ -1,22 +1,36 @@
 ---
 // Dateipfad: frontend/src/components/ReferenceCard.astro
 const { project } = Astro.props;
-const { title, category, year } = project.data;
+const { title, details, category, year } = project.data;
+const hasDetails = typeof project.body === 'string' && project.body.trim().length > 0;
+const categoryLabels = {
+  hochbau: 'Hochbau',
+  tiefbau: 'Tiefbau',
+  industrie: 'Industriebau',
+  bruecken: 'Brueckenbau',
+  sonderprojekte: 'Sonderprojekte',
+} as const;
+const categoryLabel = categoryLabels[category] ?? category;
 ---
 
-<article class="flex flex-col items-start border-l border-slate-200 pl-6 hover:border-blue-600 transition-colors group">
-  <div class="font-mono text-[10px] uppercase tracking-tighter text-blue-600 mb-4">
-    {category} — {year || '2024'}
+<article class="reference-card group flex h-full flex-col rounded-[2rem] border p-7 backdrop-blur transition">
+  <div class="reference-card__meta mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em]">
+    <span class={`reference-card__category reference-card__category--${category}`}>
+      {categoryLabel}
+    </span>
+    {year && <span>{year}</span>}
   </div>
-  <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600">
-    <a href={`/projekte/${project.id}`}>
-      {title}
-    </a>
+  <h3 class="reference-card__title text-2xl font-semibold tracking-[-0.02em]">
+    {hasDetails ? <a href={`/projekte/${project.id}`}>{title}</a> : title}
   </h3>
-  <p class="mt-4 text-sm text-slate-600 line-clamp-3 leading-relaxed">
-    {project.body ? project.body.substring(0, 160) + '...' : 'Keine Beschreibung verfügbar.'}
-  </p>
-  <div class="mt-6 text-xs font-bold uppercase tracking-widest text-slate-400">
-    Details ansehen →
-  </div>
+  {hasDetails && (
+    <p class="reference-card__text mt-4 text-sm leading-7">
+      {details}
+    </p>
+  )}
+  {hasDetails && (
+    <div class="reference-card__cta mt-auto pt-6 text-xs font-bold uppercase tracking-[0.2em]">
+      Details ansehen →
+    </div>
+  )}
 </article>

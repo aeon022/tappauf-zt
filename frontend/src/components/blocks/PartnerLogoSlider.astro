@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+
+interface PartnerEntry {
+  data: {
+    name: string;
+    logo: any;
+    website?: string;
+  };
+}
+
+interface Props {
+  partners: PartnerEntry[];
+}
+
+const { partners } = Astro.props;
+const trackPartners = [...partners, ...partners];
+---
+
+<div class="partner-slider mt-12" data-reveal>
+  <div class="partner-slider__fade partner-slider__fade--left"></div>
+  <div class="partner-slider__fade partner-slider__fade--right"></div>
+  <div class="partner-slider__track">
+    {trackPartners.map((partner, index) => {
+      const content = (
+        <div class="partner-slider__card" aria-hidden={index >= partners.length ? 'true' : 'false'}>
+          <Image src={partner.data.logo} alt={partner.data.name} class="max-h-12 w-auto object-contain opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0" loading="lazy" />
+        </div>
+      );
+
+      return partner.data.website ? (
+        <a href={partner.data.website} target="_blank" rel="noreferrer" class="partner-slider__item">
+          {content}
+        </a>
+      ) : (
+        <div class="partner-slider__item">
+          {content}
+        </div>
+      );
+    })}
+  </div>
+</div>

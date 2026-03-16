@@ -1,16 +1,85 @@
 // Dateipfad: frontend/keystatic.config.ts
-import { config, collection, fields } from '@keystatic/core';
+import { config, collection, fields, singleton } from '@keystatic/core';
 
 export default config({
   storage: { kind: 'local' },
+  singletons: {
+    settings: singleton({
+      label: 'Global Settings',
+      path: 'src/content/settings/global',
+      format: { contentField: 'content' },
+      schema: {
+        siteTitle: fields.text({ label: 'Titel' }),
+        siteSubtitle: fields.text({ label: 'Untertitel' }),
+        logo: fields.image({
+          label: 'Logo',
+          directory: 'src/assets/references',
+          publicPath: '../../assets/references/',
+        }),
+        logoAlt: fields.text({ label: 'Logo Alt-Text' }),
+        siteDescription: fields.text({ label: 'Beschreibung', multiline: true }),
+        metaDescription: fields.text({ label: 'Meta Beschreibung', multiline: true }),
+        email: fields.text({ label: 'E-Mail' }),
+        phone: fields.text({ label: 'Telefon' }),
+        address: fields.text({ label: 'Adresse', multiline: true }),
+        googleMapsEmbed: fields.text({ label: 'Google Maps Embed URL' }),
+        googleMapsLink: fields.text({ label: 'Google Maps Link' }),
+        companyDetails: fields.text({ label: 'Firmendaten', multiline: true }),
+        facebook: fields.text({ label: 'Facebook Link' }),
+        x: fields.text({ label: 'X Link' }),
+        instagram: fields.text({ label: 'Instagram Link' }),
+        tiktok: fields.text({ label: 'TikTok Link' }),
+        linkedin: fields.text({ label: 'LinkedIn Link' }),
+        youtube: fields.text({ label: 'YouTube Link' }),
+        content: fields.markdoc({ label: 'Zusatzinhalt' }),
+      },
+    }),
+    home: singleton({
+      label: 'Startseite',
+      path: 'src/content/home/startseite',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.text({ label: 'Interner Name' }),
+        heroEyebrow: fields.text({ label: 'Hero Eyebrow' }),
+        heroHeadline: fields.text({ label: 'Hero Headline' }),
+        heroText: fields.text({ label: 'Hero Text', multiline: true }),
+        heroImage: fields.image({
+          label: 'Hero Bild',
+          directory: 'src/assets/references',
+          publicPath: '../../assets/references/',
+        }),
+        heroImageAlt: fields.text({ label: 'Hero Bild Alt-Text' }),
+        heroPrimaryLabel: fields.text({ label: 'Hero Button 1 Label' }),
+        heroPrimaryHref: fields.text({ label: 'Hero Button 1 Link' }),
+        heroSecondaryLabel: fields.text({ label: 'Hero Button 2 Label' }),
+        heroSecondaryHref: fields.text({ label: 'Hero Button 2 Link' }),
+        aboutTitle: fields.text({ label: 'Über uns Titel' }),
+        aboutText: fields.text({ label: 'Über uns Text', multiline: true }),
+        profileTitle: fields.text({ label: 'Profil Titel' }),
+        profileHeadline: fields.text({ label: 'Profil Headline' }),
+        approachTitle: fields.text({ label: 'Arbeitsweise Titel' }),
+        approachText: fields.text({ label: 'Arbeitsweise Text', multiline: true }),
+        insuranceTitle: fields.text({ label: 'Versicherung Titel' }),
+        insuranceText: fields.text({ label: 'Versicherung Text', multiline: true }),
+        partnersTitle: fields.text({ label: 'Auftraggeber & Partner Titel' }),
+        partnersText: fields.text({ label: 'Auftraggeber & Partner Text', multiline: true }),
+        publicationsTitle: fields.text({ label: 'Publikationen Titel' }),
+        publicationsText: fields.text({ label: 'Publikationen Text', multiline: true }),
+        referencesTitle: fields.text({ label: 'Referenzen Titel' }),
+        referencesText: fields.text({ label: 'Referenzen Text', multiline: true }),
+        content: fields.markdoc({ label: 'Zusätzlicher Inhalt' }),
+      },
+    }),
+  },
   collections: {
     references: collection({
       label: 'Referenzen (Projekte)',
       slugField: 'title',
-      path: 'src/content/references/*',
+      path: 'src/content/references/entries/*',
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Projekt Titel' } }),
+        details: fields.text({ label: 'Details / Auftraggeber' }),
         category: fields.select({
           label: 'Kategorie',
           options: [
@@ -18,7 +87,7 @@ export default config({
             { label: 'Tiefbau', value: 'tiefbau' },
             { label: 'Industriebau', value: 'industrie' },
             { label: 'Brückenbau', value: 'bruecken' },
-            { label: 'Gutachten', value: 'gutachten' },
+            { label: 'Sonderprojekte', value: 'sonderprojekte' },
           ],
           defaultValue: 'industrie',
         }),
@@ -27,18 +96,29 @@ export default config({
         heroImage: fields.image({
           label: 'Hauptbild',
           directory: 'src/assets/references',
-          publicPath: '../../assets/references/',
+          publicPath: '../../../assets/references/',
         }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
         content: fields.markdoc({ label: 'Beschreibung' }),
       },
     }),
     services: collection({
       label: 'Leistungen',
       slugField: 'title',
-      path: 'src/content/services/*',
+      path: 'src/content/services/entries/*',
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Leistung Name' } }),
+        summary: fields.text({ label: 'Kurzbeschreibung' }),
+        image: fields.image({
+          label: 'Vorschaubild',
+          directory: 'src/assets/references',
+          publicPath: '../../../assets/references/',
+        }),
+        items: fields.array(
+          fields.text({ label: 'Leistungsbaustein' }),
+          { label: 'Leistungsbausteine', itemLabel: props => props.value || 'Eintrag' }
+        ),
         order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
         content: fields.markdoc({ label: 'Detaillierte Beschreibung' }),
       },
@@ -46,17 +126,21 @@ export default config({
     team: collection({
       label: 'Team',
       slugField: 'name',
-      path: 'src/content/team/*',
+      path: 'src/content/team/entries/*',
+      format: { contentField: 'content' },
       schema: {
         name: fields.slug({ name: { label: 'Vollständiger Name' } }),
         role: fields.text({ label: 'Position / Rolle' }),
+        qualification: fields.text({ label: 'Zusatz / Qualifikation' }),
+        phone: fields.text({ label: 'Telefon' }),
         email: fields.text({ label: 'E-Mail Adresse' }),
         image: fields.image({
           label: 'Porträtfoto',
           directory: 'src/assets/team',
-          publicPath: '../../assets/team/',
+          publicPath: '../../../assets/team/',
         }),
         order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Profiltext' }),
       },
     }),
     jobs: collection({
@@ -66,6 +150,7 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Stellentitel' } }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
         status: fields.select({
           label: 'Status',
           options: [
@@ -74,18 +159,49 @@ export default config({
           ],
           defaultValue: 'aktiv',
         }),
+        summary: fields.text({ label: 'Kurzbeschreibung' }),
+        location: fields.text({ label: 'Standort' }),
+        workload: fields.text({ label: 'Arbeitszeit' }),
+        employmentType: fields.text({ label: 'Anstellungsart' }),
+        applyEmail: fields.text({ label: 'Bewerbungs-E-Mail' }),
         content: fields.markdoc({ label: 'Job-Beschreibung' }),
+      },
+    }),
+    partners: collection({
+      label: 'Auftraggeber & Partner',
+      slugField: 'name',
+      path: 'src/content/partners/entries/*',
+      format: { contentField: 'content' },
+      schema: {
+        name: fields.slug({ name: { label: 'Name' } }),
+        logo: fields.image({
+          label: 'Logo',
+          directory: 'src/assets/references',
+          publicPath: '../../../assets/references/',
+        }),
+        website: fields.text({ label: 'Website / Link' }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Zusatzinhalt' }),
       },
     }),
     publications: collection({
       label: 'Publikationen',
       slugField: 'title',
-      path: 'src/content/publications/*',
+      path: 'src/content/publications/entries/*',
       format: { contentField: 'content' },
       schema: {
-        title: fields.slug({ name: { label: 'Titel der Publikation' } }),
+        title: fields.slug({ name: { label: 'Titel' } }),
         year: fields.integer({ label: 'Jahr' }),
-        content: fields.markdoc({ label: 'Kurzfassung / Info' }),
+        citation: fields.text({ label: 'Zitat / Quelle', multiline: true }),
+        pdfFile: fields.file({
+          label: 'PDF Upload',
+          directory: 'public/uploads/publications',
+          publicPath: '/uploads/publications/',
+          description: 'PDF lokal hochladen, damit die Datei direkt von dieser Website ausgeliefert wird.',
+        }),
+        pdfUrl: fields.text({ label: 'PDF Link' }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Zusatzinhalt' }),
       },
     }),
   },

@@ -1,0 +1,30 @@
+---
+interface Item {
+  label: string;
+  value?: string;
+  href?: string;
+}
+
+interface Props {
+  title: string;
+  items: Item[];
+  inverse?: boolean;
+}
+
+const { title, items, inverse = false } = Astro.props;
+const filtered = items.filter((item) => item.value);
+---
+
+<aside class:list={['rounded-[2rem] p-8 shadow-sm', inverse ? 'border border-white/10 bg-white/5 backdrop-blur text-white' : 'bg-white text-slate-700']} data-reveal>
+  <h2 class:list={['text-sm font-semibold uppercase tracking-[0.25em]', inverse ? 'text-slate-400' : 'text-slate-500']}>{title}</h2>
+  <dl class="mt-6 space-y-4 text-sm">
+    {filtered.map((item) => (
+      <div>
+        <dt class:list={[inverse ? 'text-slate-500' : 'text-slate-400']}>{item.label}</dt>
+        <dd class:list={['mt-1 font-semibold', inverse ? 'text-white' : 'text-slate-900']}>
+          {item.href ? <a href={item.href} class:list={[inverse ? 'text-blue-300 hover:text-white' : 'text-blue-600 hover:text-slate-900']}>{item.value}</a> : item.value}
+        </dd>
+      </div>
+    ))}
+  </dl>
+</aside>

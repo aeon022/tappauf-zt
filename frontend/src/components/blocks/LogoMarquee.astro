@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+const partners = await getCollection('partners');
+---
+<div class="relative flex overflow-x-hidden border-y border-slate-200 bg-slate-50 py-8">
+  <div class="animate-marquee whitespace-nowrap flex gap-12 items-center">
+    {partners.map(p => (
+      <span class="text-xl font-bold text-slate-400 grayscale hover:grayscale-0 transition-all uppercase tracking-tighter">
+        {p.data.name}
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+</style>

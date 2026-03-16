@@ -1,0 +1,22 @@
+---
+// Dateipfad: frontend/src/components/ReferenceCard.astro
+const { project } = Astro.props;
+const { title, category, year } = project.data;
+---
+
+<article class="flex flex-col items-start border-l border-slate-200 pl-6 hover:border-blue-600 transition-colors group">
+  <div class="font-mono text-[10px] uppercase tracking-tighter text-blue-600 mb-4">
+    {category} — {year || '2024'}
+  </div>
+  <h3 class="text-xl font-bold text-slate-900 group-hover:text-blue-600">
+    <a href={`/projekte/${project.id}`}>
+      {title}
+    </a>
+  </h3>
+  <p class="mt-4 text-sm text-slate-600 line-clamp-3 leading-relaxed">
+    {project.body ? project.body.substring(0, 160) + '...' : 'Keine Beschreibung verfügbar.'}
+  </p>
+  <div class="mt-6 text-xs font-bold uppercase tracking-widest text-slate-400">
+    Details ansehen →
+  </div>
+</article>

@@ -2,37 +2,45 @@
 import { config, collection, fields } from '@keystatic/core';
 
 export default config({
-  storage: {
-    kind: 'local',
-  },
+  storage: { kind: 'local' },
   collections: {
     references: collection({
-      label: 'Referenzen',
+      label: 'Referenzen (Projekte)',
       slugField: 'title',
       path: 'src/content/references/*',
       format: { contentField: 'content' },
       schema: {
-        title: fields.slug({ name: { label: 'Titel' } }),
+        title: fields.slug({ name: { label: 'Projekt Titel' } }),
         category: fields.select({
           label: 'Kategorie',
           options: [
-            { label: 'Architektonische Bauwerke', value: 'architektur' },
-            { label: 'Brücken', value: 'bruecken' },
-            { label: 'Industriebauten', value: 'industrie' },
+            { label: 'Hochbau', value: 'hochbau' },
+            { label: 'Tiefbau', value: 'tiefbau' },
+            { label: 'Industriebau', value: 'industrie' },
+            { label: 'Brückenbau', value: 'bruecken' },
+            { label: 'Gutachten', value: 'gutachten' },
           ],
           defaultValue: 'industrie',
         }),
-        year: fields.integer({ label: 'Jahr', validation: { min: 1990, max: 2030 } }),
+        year: fields.text({ label: 'Jahr (z.B. 2024)' }),
         client: fields.text({ label: 'Auftraggeber' }),
         heroImage: fields.image({
           label: 'Hauptbild',
           directory: 'src/assets/references',
           publicPath: '../../assets/references/',
         }),
-        content: fields.markdoc({ 
-          label: 'Projektbeschreibung',
-          description: 'Hier landen die bereinigten Texte aus der XML'
-        }),
+        content: fields.markdoc({ label: 'Beschreibung' }),
+      },
+    }),
+    services: collection({
+      label: 'Leistungen',
+      slugField: 'title',
+      path: 'src/content/services/*',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.slug({ name: { label: 'Leistung Name' } }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Detaillierte Beschreibung' }),
       },
     }),
     team: collection({
@@ -41,35 +49,43 @@ export default config({
       path: 'src/content/team/*',
       schema: {
         name: fields.slug({ name: { label: 'Vollständiger Name' } }),
-        role: fields.text({ label: 'Position / Titel' }),
-        email: fields.text({ label: 'E-Mail' }),
+        role: fields.text({ label: 'Position / Rolle' }),
+        email: fields.text({ label: 'E-Mail Adresse' }),
         image: fields.image({
           label: 'Porträtfoto',
           directory: 'src/assets/team',
           publicPath: '../../assets/team/',
         }),
+        order: fields.integer({ label: 'Sortierung', defaultValue: 0 }),
       },
     }),
-    partners: collection({
-      label: 'Partner & Software',
-      slugField: 'name',
-      path: 'src/content/partners/*',
+    jobs: collection({
+      label: 'Jobs',
+      slugField: 'title',
+      path: 'src/content/jobs/*',
+      format: { contentField: 'content' },
       schema: {
-        name: fields.slug({ name: { label: 'Firmenname' } }),
-        logo: fields.image({
-          label: 'Logo (SVG bevorzugt)',
-          directory: 'src/assets/logos',
-          publicPath: '../../assets/logos/',
-        }),
-        type: fields.select({
-          label: 'Typ',
+        title: fields.slug({ name: { label: 'Stellentitel' } }),
+        status: fields.select({
+          label: 'Status',
           options: [
-            { label: 'Kunde', value: 'kunde' },
-            { label: 'Partner', value: 'partner' },
-            { label: 'Software', value: 'software' },
+            { label: 'Aktiv', value: 'aktiv' },
+            { label: 'Archiviert', value: 'archiviert' },
           ],
-          defaultValue: 'partner',
+          defaultValue: 'aktiv',
         }),
+        content: fields.markdoc({ label: 'Job-Beschreibung' }),
+      },
+    }),
+    publications: collection({
+      label: 'Publikationen',
+      slugField: 'title',
+      path: 'src/content/publications/*',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.slug({ name: { label: 'Titel der Publikation' } }),
+        year: fields.integer({ label: 'Jahr' }),
+        content: fields.markdoc({ label: 'Kurzfassung / Info' }),
       },
     }),
   },

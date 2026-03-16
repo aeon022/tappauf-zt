@@ -1,0 +1,72 @@
+---
+// Dateipfad: frontend/src/layouts/BaseLayout.astro
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = "Tappauf ZT - Ingenieurbüro für Tragwerksplanung & Baudynamik" } = Astro.props;
+---
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <ClientRouter />
+  </head>
+  <body class="bg-white text-slate-900 antialiased font-sans selection:bg-blue-100">
+    <div class="fixed inset-0 grid grid-cols-4 md:grid-cols-12 gap-4 px-4 pointer-events-none opacity-[0.03] -z-10" aria-hidden="true">
+      {Array.from({ length: 12 }).map(() => <div class="bg-slate-900 h-full border-x border-slate-900"></div>)}
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a href="/" class="text-xl font-black tracking-tighter uppercase italic group">
+          Tappauf<span class="text-blue-600 group-hover:text-slate-900 transition-colors">.ZT</span>
+        </a>
+        <div class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em]">
+          <a href="/leistungen" class="hover:text-blue-600 transition-colors">Leistungen</a>
+          <a href="/projekte" class="hover:text-blue-600 transition-colors">Referenzen</a>
+          <a href="/team" class="hover:text-blue-600 transition-colors">Team</a>
+          <a href="/jobs" class="hover:text-blue-600 transition-colors">Jobs</a>
+        </div>
+        <a href="/kontakt" class="bg-slate-900 text-white px-5 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-blue-600 transition-all">Anfrage</a>
+      </div>
+    </nav>
+
+    <slot />
+
+    <footer class="bg-slate-950 text-white pt-24 pb-12 mt-20">
+      <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16 border-b border-white/10 pb-20">
+        <div class="col-span-2">
+          <div class="text-2xl font-black italic uppercase tracking-tighter mb-6">Tappauf.ZT</div>
+          <p class="text-slate-400 max-w-sm leading-relaxed text-sm">
+            Staatlich befugte und beeidete Ziviltechniker für Bauwesen. Spezialisiert auf komplexe Tragwerke und Baudynamik.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-xs font-mono uppercase text-blue-500 mb-6">Navigation</h4>
+          <ul class="space-y-4 text-sm font-medium">
+            <li><a href="/projekte" class="hover:text-blue-500">Referenzen</a></li>
+            <li><a href="/leistungen" class="hover:text-blue-500">Leistungen</a></li>
+            <li><a href="/publikationen" class="hover:text-blue-500">Publikationen</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-xs font-mono uppercase text-blue-500 mb-6">Kontakt</h4>
+          <p class="text-sm text-slate-400">Graz, Österreich<br/>office@tappauf-zt.at</p>
+        </div>
+      </div>
+      <div class="max-w-7xl mx-auto px-6 pt-12 flex justify-between text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+        <span>© 2026 Tappauf ZT GmbH</span>
+        <div class="flex gap-6">
+          <a href="/impressum">Impressum</a>
+          <a href="/datenschutz">Datenschutz</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

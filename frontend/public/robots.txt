@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /keystatic/
-
-Sitemap: https://www.tappauf-zt.at/sitemap.xml

@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
-const site = 'https://www.tappauf-zt.at';
+export const prerender = true;
 
 const staticPaths = [
   '/',
@@ -15,9 +15,10 @@ const staticPaths = [
   '/datenschutz',
 ];
 
-const toUrl = (path: string) => new URL(path, site).toString();
-
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = async ({ site }) => {
+  const siteUrl = site || new URL('https://www.tappauf-zt.at');
+  const basePath = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
+  const toUrl = (path: string) => new URL(`${basePath}${path}`, siteUrl).toString();
   const services = await getCollection('services');
   const references = await getCollection('references');
   const jobs = await getCollection('jobs');

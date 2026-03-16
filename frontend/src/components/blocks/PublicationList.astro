@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../../lib/withBase';
+
 interface PublicationEntry {
   id: string;
   data: {
@@ -22,7 +24,7 @@ const items = typeof limit === 'number' ? publications.slice(0, limit) : publica
 <div class="mt-12 grid gap-6">
   {items.map((publication) => (
     (() => {
-      const pdfHref = publication.data.pdfFile || publication.data.pdfUrl;
+      const pdfHref = publication.data.pdfFile ? withBase(publication.data.pdfFile) : publication.data.pdfUrl;
       const isLocalPdf = Boolean(publication.data.pdfFile);
 
       return (

@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { withBase } from '../../lib/withBase';
 
 const jobs = (await getCollection('jobs'))
   .sort((a, b) => a.data.order - b.data.order)
@@ -44,7 +45,7 @@ const singleJobRender = singleJob ? await render(singleJob) : null;
       ) : (
         <div class="mt-12 grid gap-6 md:grid-cols-2">
           {jobs.map((job) => (
-            <a href={`/jobs/${job.id}`} class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" data-reveal>
+            <a href={withBase(`/jobs/${job.id}`)} class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" data-reveal>
               <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">{job.data.status}</p>
               <h2 class="mt-4 text-3xl font-semibold tracking-[-0.02em] text-slate-950">{job.data.title}</h2>
               {job.data.summary && <p class="mt-4 text-sm leading-7 text-slate-600">{job.data.summary}</p>}

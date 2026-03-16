@@ -1,4 +1,6 @@
 ---
+import { withBase } from '../../lib/withBase';
+
 // Dateipfad: frontend/src/components/ReferenceCard.astro
 const { project } = Astro.props;
 const { title, details, category, year } = project.data;
@@ -11,6 +13,7 @@ const categoryLabels = {
   sonderprojekte: 'Sonderprojekte',
 } as const;
 const categoryLabel = categoryLabels[category] ?? category;
+const detailHref = withBase(`/projekte/${project.id}`);
 ---
 
 <article class="reference-card group flex h-full flex-col rounded-[2rem] border p-7 backdrop-blur transition">
@@ -21,7 +24,7 @@ const categoryLabel = categoryLabels[category] ?? category;
     {year && <span>{year}</span>}
   </div>
   <h3 class="reference-card__title text-2xl font-semibold tracking-[-0.02em]">
-    {hasDetails ? <a href={`/projekte/${project.id}`}>{title}</a> : title}
+    {hasDetails ? <a href={detailHref}>{title}</a> : title}
   </h3>
   {hasDetails && (
     <p class="reference-card__text mt-4 text-sm leading-7">

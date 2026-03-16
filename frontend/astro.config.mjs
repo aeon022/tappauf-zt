@@ -3,21 +3,20 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
-
-import node from '@astrojs/node';
-
 import markdoc from '@astrojs/markdoc';
 
+const site = process.env.SITE_URL || 'https://www.tappauf-zt.at';
+const rawBase = process.env.BASE_PATH || '/';
+const base = rawBase === '/' ? '/' : `/${rawBase.replace(/^\/+|\/+$/g, '')}`;
+const enableKeystatic = process.env.NODE_ENV !== 'production' || process.env.ENABLE_KEYSTATIC === 'true';
+
 export default defineConfig({
-  site: 'https://www.tappauf-zt.at',
-  // Keystatic braucht SSR oder Hybrid Mode für das Admin-UI
-  integrations: [react(), keystatic(), markdoc()],
+  site,
+  base,
+  output: 'static',
+  integrations: [react(), markdoc(), ...(enableKeystatic ? [keystatic()] : [])],
 
   vite: {
     plugins: [tailwindcss()],
   },
-
-  adapter: node({
-    mode: 'standalone',
-  }),
 });

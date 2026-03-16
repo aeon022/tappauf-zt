@@ -112,6 +112,10 @@ span {
   color: rgb(15 23 42);
 }
 
+.mobile-menu-toggle {
+  display: none;
+}
+
 .mobile-menu-toggle span,
 .mobile-menu-close span {
   position: absolute;
@@ -504,6 +508,12 @@ html[data-theme="dark"] .mobile-menu__link {
 html[data-theme="dark"] .mobile-menu__cta {
   background: rgb(59 130 246);
   color: white;
+}
+
+@media (max-width: 767px) {
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
 }
 
 html[data-theme="dark"] .site-logo {

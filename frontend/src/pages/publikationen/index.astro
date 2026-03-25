@@ -3,13 +3,30 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PublicationList from '../../components/blocks/PublicationList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { withBase } from '../../lib/withBase';
 
 const publications = (await getCollection('publications')).sort((a, b) => b.data.year - a.data.year || a.data.order - b.data.order);
+const seoBase = Astro.site ?? Astro.url;
+const publicationsStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Publikationen',
+  url: new URL(withBase('/publikationen'), seoBase).toString(),
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: publications.map((publication, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: publication.data.title,
+    })),
+  },
+};
 ---
 
 <BaseLayout
   title="Publikationen zu Tragwerksplanung und Baudynamik | Tappauf ZT"
   description="Fachbeitraege, wissenschaftliche Arbeiten und technische Publikationen zu Tragwerksplanung, Baudynamik und Erschuetterungsschutz."
+  structuredData={publicationsStructuredData}
 >
   <main class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">

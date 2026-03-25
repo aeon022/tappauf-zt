@@ -75,6 +75,7 @@ export default config({
     references: collection({
       label: 'Referenzen (Projekte)',
       slugField: 'title',
+      columns: ['title', 'details', 'category', 'year'],
       path: 'src/content/references/entries/*',
       format: { contentField: 'content' },
       schema: {
@@ -105,6 +106,7 @@ export default config({
     services: collection({
       label: 'Leistungen',
       slugField: 'title',
+      columns: ['title', 'summary', 'order'],
       path: 'src/content/services/entries/*',
       format: { contentField: 'content' },
       schema: {
@@ -126,6 +128,7 @@ export default config({
     team: collection({
       label: 'Team',
       slugField: 'name',
+      columns: ['name', 'role', 'email'],
       path: 'src/content/team/entries/*',
       format: { contentField: 'content' },
       schema: {
@@ -146,6 +149,7 @@ export default config({
     jobs: collection({
       label: 'Jobs',
       slugField: 'title',
+      columns: ['title', 'status', 'location', 'employmentType'],
       path: 'src/content/jobs/*',
       format: { contentField: 'content' },
       schema: {
@@ -170,6 +174,7 @@ export default config({
     partners: collection({
       label: 'Auftraggeber & Partner',
       slugField: 'name',
+      columns: ['name', 'website', 'order'],
       path: 'src/content/partners/entries/*',
       format: { contentField: 'content' },
       schema: {
@@ -187,6 +192,7 @@ export default config({
     publications: collection({
       label: 'Publikationen',
       slugField: 'title',
+      columns: ['title', 'year', 'citation'],
       path: 'src/content/publications/entries/*',
       format: { contentField: 'content' },
       schema: {

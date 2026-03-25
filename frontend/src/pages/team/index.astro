@@ -4,12 +4,29 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TeamGrid from '../../components/blocks/TeamGrid.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { withBase } from '../../lib/withBase';
 
 const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
+const seoBase = Astro.site ?? Astro.url;
+const teamStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Team',
+  url: new URL(withBase('/team'), seoBase).toString(),
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: team.map((member, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: member.data.name,
+    })),
+  },
+};
 ---
 <BaseLayout
   title="Team fuer Tragwerksplanung und Baudynamik | Tappauf ZT"
   description="Das Team der Tappauf ZT GmbH in Graz: Expertise in Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau."
+  structuredData={teamStructuredData}
 >
   <main class="mx-auto max-w-7xl px-6 py-20 sm:py-28">
     <PageIntro eyebrow="Team" title="Expertise im Team." text="Ein interdisziplinäres Team aus Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau." />

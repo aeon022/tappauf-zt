@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/ui/PageIntro.astro';
+
+const cookieStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Cookie-Richtlinien',
+  description: 'Hinweise zu lokalen Speicherungen, Einwilligung und externen Inhalten auf der Website von Tappauf ZT.',
+};
+---
+
+<BaseLayout
+  title="Cookie-Richtlinien | Tappauf ZT"
+  description="Hinweise zu lokalen Speicherungen, Einwilligung und externen Inhalten auf der Website von Tappauf ZT."
+  structuredData={cookieStructuredData}
+>
+  <main class="bg-slate-50 py-20 sm:py-28">
+    <div class="mx-auto max-w-5xl px-6 lg:px-8">
+      <PageIntro
+        eyebrow="Richtlinien"
+        title="Cookie-Richtlinien"
+        text="Diese Seite erklärt, welche lokalen Speicherungen und externen Inhalte auf der Website verwendet werden und wie du deine Zustimmung steuern kannst."
+      />
+
+      <div class="mt-12 space-y-6">
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">1. Was auf dieser Website gespeichert wird</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Diese Website verwendet keine Werbe- oder Tracking-Cookies. Es werden ausschließlich lokale Speicherungen verwendet, die für Darstellung, Bedienung und die Freigabe externer Inhalte relevant sind.
+            </p>
+            <p>
+              Dazu gehören insbesondere Einstellungen für Dark Mode, erhöhten Kontrast, reduzierte Bewegung sowie deine Auswahl im Cookie-Hinweis.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">2. Notwendige lokale Speicherungen</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Notwendige Speicherungen dienen dazu, deine Bedienpräferenzen auf dem Gerät zu merken. Ohne diese Speicherung müssten Einstellungen wie Farbschema oder reduzierte Bewegung bei jedem Seitenaufruf neu gesetzt werden.
+            </p>
+            <p>
+              Diese Speicherungen enthalten keine Werbeprofile und werden nicht für Tracking über verschiedene Websites hinweg verwendet.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">3. Externe Inhalte</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Auf den Kontaktbereichen kann eine eingebettete Google-Maps-Karte angezeigt werden. Diese Karte wird erst geladen, wenn du externen Inhalten ausdrücklich zustimmst.
+            </p>
+            <p>
+              Durch das Laden von Google Maps können personenbezogene Daten, insbesondere IP-Adresse und technische Nutzungsdaten, an Google übermittelt werden.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">4. Zustimmung und Widerruf</h2>
+          <div class="mt-5 space-y-5 text-base leading-8 text-slate-700">
+            <p>
+              Beim ersten Besuch erscheint ein Cookie-Hinweis. Dort kannst du entscheiden, ob nur notwendige Speicherungen verwendet werden oder ob zusätzlich externe Inhalte wie Google Maps geladen werden dürfen.
+            </p>
+            <p>
+              Bereits erteilte Zustimmungen können jederzeit gelöscht werden, indem du die Website-Daten im Browser entfernst. Danach erscheint der Hinweis erneut.
+            </p>
+          </div>
+        </section>
+
+        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10" data-reveal>
+          <h2 class="font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">5. Weitere Informationen</h2>
+          <p class="mt-5 text-base leading-8 text-slate-700">
+            Ergänzende Informationen zur Verarbeitung personenbezogener Daten findest du in der Datenschutzerklärung.
+          </p>
+        </section>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

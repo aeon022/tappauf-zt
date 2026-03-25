@@ -1,10 +1,12 @@
 ---
+import { Image } from 'astro:assets';
 import { withBase } from '../../lib/withBase';
+import { hasReferenceContent } from '../../lib/referenceContent';
 
 // Dateipfad: frontend/src/components/ReferenceCard.astro
 const { project } = Astro.props;
-const { title, details, category, year } = project.data;
-const hasDetails = typeof project.body === 'string' && project.body.trim().length > 0;
+const { title, details, category, year, client, heroImage } = project.data;
+const hasDetails = hasReferenceContent(project.body);
 const categoryLabels = {
   hochbau: 'Hochbau',
   tiefbau: 'Tiefbau',
@@ -14,26 +16,77 @@ const categoryLabels = {
 } as const;
 const categoryLabel = categoryLabels[category] ?? category;
 const detailHref = withBase(`/projekte/${project.id}`);
+const previewLabel = client || details || 'Projektvorschau';
+const searchableText = [title, details, client, categoryLabel, year ? String(year) : '']
+  .filter(Boolean)
+  .join(' ')
+  .toLowerCase();
+const fallbackCode = title
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((chunk) => chunk[0]?.toUpperCase())
+  .join('');
 ---
 
-<article class="reference-card group flex h-full flex-col rounded-[2rem] border p-7 backdrop-blur transition">
-  <div class="reference-card__meta mb-4 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em]">
-    <span class={`reference-card__category reference-card__category--${category}`}>
-      {categoryLabel}
-    </span>
-    {year && <span>{year}</span>}
+<article
+  class="reference-card group flex h-full flex-col overflow-hidden rounded-[2.15rem] border backdrop-blur transition"
+  data-reference-card
+  data-category={category}
+  data-category-label={categoryLabel}
+  data-title={title.toLowerCase()}
+  data-client={(client || '').toLowerCase()}
+  data-details={(details || '').toLowerCase()}
+  data-year={year ? String(year) : ''}
+  data-href={hasDetails ? detailHref : ''}
+  data-search={searchableText}
+>
+  <div class="reference-card__visual">
+    {heroImage ? (
+      <Image
+        src={heroImage}
+        alt={title}
+        class="reference-card__image"
+        loading="lazy"
+        decoding="async"
+        widths={[480, 768, 960]}
+        sizes="(min-width: 1024px) 30vw, (min-width: 768px) 46vw, 100vw"
+        quality={78}
+      />
+    ) : (
+      <div class={`reference-card__placeholder reference-card__placeholder--${category}`} aria-hidden="true">
+        <div class="reference-card__placeholder-grid"></div>
+        <span class="reference-card__placeholder-code">{fallbackCode || 'ZT'}</span>
+      </div>
+    )}
+
+    <div class="reference-card__overlay">
+      <span class={`reference-card__category reference-card__category--${category}`}>
+        {categoryLabel}
+      </span>
+      {year && <span class="reference-card__year">{year}</span>}
+    </div>
   </div>
-  <h3 class="reference-card__title text-2xl font-semibold tracking-[-0.02em]">
-    {hasDetails ? <a href={detailHref}>{title}</a> : title}
-  </h3>
-  {hasDetails && (
+
+  <div class="flex flex-1 flex-col p-7">
+    <p class="reference-card__eyebrow font-mono text-[10px] uppercase tracking-[0.24em]">
+      {previewLabel}
+    </p>
+    <h3 class="reference-card__title mt-4 text-[1.9rem] font-semibold tracking-[-0.03em]">
+      {hasDetails ? <a href={detailHref} class="stretched-link">{title}</a> : title}
+    </h3>
+
     <p class="reference-card__text mt-4 text-sm leading-7">
       {details}
     </p>
-  )}
-  {hasDetails && (
-    <div class="reference-card__cta mt-auto pt-6 text-xs font-bold uppercase tracking-[0.2em]">
-      Details ansehen →
+
+    <div class="mt-auto flex items-center justify-between gap-4 pt-8">
+      <span class="reference-card__line"></span>
+      {hasDetails && (
+        <a href={detailHref} class="reference-card__cta text-xs font-bold uppercase tracking-[0.2em]">
+          Details ansehen
+        </a>
+      )}
     </div>
-  )}
+  </div>
 </article>

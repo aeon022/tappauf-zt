@@ -63,15 +63,29 @@ const phoneHref = `tel:${phone.replace(/[^+\d]/g, '')}`;
         </div>
       </div>
 
-      <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm" data-reveal>
+      <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm" data-reveal data-external-content>
         {detailed && (
           <div class="border-b border-slate-200 bg-slate-50 px-5 py-4">
             <p class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Standort Graz</p>
             <p class="mt-1 text-sm text-slate-600">{address.split('\n').join(', ')}</p>
           </div>
         )}
+        <div class="contact-embed-placeholder flex min-h-[27rem] flex-col justify-between bg-[linear-gradient(160deg,_rgba(248,250,252,0.98),_rgba(241,245,249,0.92))] p-8" data-external-placeholder>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">Externer Inhalt</p>
+            <h3 class="mt-4 font-display text-3xl font-semibold tracking-[-0.03em] text-slate-950">Google Maps erst nach Zustimmung.</h3>
+            <p class="mt-5 max-w-xl text-base leading-8 text-slate-700">
+              Die Karte wird von Google geladen und kann personenbezogene Daten wie IP-Adresse und Nutzungsdaten verarbeiten.
+            </p>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <button type="button" class="contact-embed-placeholder__button" data-cookie-enable-external>Google Maps erlauben</button>
+            <a href={mapLink} target="_blank" rel="noreferrer" class="contact-embed-placeholder__link">In Google Maps öffnen</a>
+          </div>
+        </div>
         <iframe
-          src={mapEmbed}
+          data-external-iframe
+          data-src={mapEmbed}
           title={`Google Map ${title}`}
           class:list={[
             'block w-full border-0 grayscale-[0.15] contrast-[1.05] saturate-[0.85]',
@@ -79,6 +93,7 @@ const phoneHref = `tel:${phone.replace(/[^+\d]/g, '')}`;
           ]}
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
+          hidden
         ></iframe>
       </div>
     </div>

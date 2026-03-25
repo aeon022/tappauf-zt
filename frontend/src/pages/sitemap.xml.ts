@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { hasReferenceContent } from '../lib/referenceContent';
 
 export const prerender = true;
 
@@ -27,7 +28,7 @@ export const GET: APIRoute = async ({ site }) => {
     ...staticPaths.map(toUrl),
     ...services.map((entry) => toUrl(`/leistungen/${entry.id}`)),
     ...references
-      .filter((entry) => typeof entry.body === 'string' && entry.body.trim().length > 0)
+      .filter((entry) => hasReferenceContent(entry.body))
       .map((entry) => toUrl(`/projekte/${entry.id}`)),
     ...jobs
       .filter((entry) => entry.data.status === 'aktiv')

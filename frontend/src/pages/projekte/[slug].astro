@@ -4,11 +4,13 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { hasReferenceContent } from '../../lib/referenceContent';
+import { withBase } from '../../lib/withBase';
 
 export async function getStaticPaths() {
   const entries = await getCollection('references');
   return entries
-    .filter((entry) => typeof entry.body === 'string' && entry.body.trim().length > 0)
+    .filter((entry) => hasReferenceContent(entry.body))
     .map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
@@ -17,23 +19,61 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const projectsHref = withBase('/projekte');
+const seoBase = Astro.site ?? Astro.url;
+const projectUrl = new URL(withBase(`/projekte/${entry.id}`), seoBase).toString();
+const categoryLabels = {
+  hochbau: 'Hochbau',
+  tiefbau: 'Tiefbau',
+  industrie: 'Industriebau',
+  bruecken: 'Brückenbau',
+  sonderprojekte: 'Sonderprojekte',
+} as const;
+const detailCategory = categoryLabels[entry.data.category] ?? entry.data.category;
+const detailDescription = `${entry.data.title}: ${entry.data.details}${detailCategory ? `, ${detailCategory}` : ''}.`;
+const referenceStructuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: new URL(withBase('/'), seoBase).toString() },
+      { '@type': 'ListItem', position: 2, name: 'Referenzen', item: new URL(projectsHref, seoBase).toString() },
+      { '@type': 'ListItem', position: 3, name: entry.data.title, item: projectUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: entry.data.title,
+    description: detailDescription,
+    url: projectUrl,
+    image: entry.data.heroImage?.src ? new URL(entry.data.heroImage.src, seoBase).toString() : undefined,
+    dateCreated: entry.data.year ? String(entry.data.year) : undefined,
+    creator: {
+      '@type': 'Organization',
+      name: 'Tappauf ZT GmbH',
+    },
+    about: [detailCategory, entry.data.details].filter(Boolean),
+  },
+];
 ---
 
 <BaseLayout
   title={`${entry.data.title} | Referenz | Tappauf ZT`}
-  description={`${entry.data.title}: ${entry.data.details}${entry.data.category ? `, ${entry.data.category}` : ''}.`}
+  description={detailDescription}
   ogImage={entry.data.heroImage}
   ogType="article"
+  structuredData={referenceStructuredData}
 >
   <article class="reference-detail py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
-      <PageIntro eyebrow="Referenz" title={entry.data.title} text={entry.data.details} />
+      <PageIntro eyebrow="Referenz" title={entry.data.title} />
 
-      <div class="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr]">
-        <aside class="space-y-6">
+      <div class="mt-12 grid grid-cols-1 gap-12 lg:mt-16 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+        <aside class="space-y-8 lg:sticky lg:top-28">
           {entry.data.heroImage && (
-            <div class="reference-detail__media overflow-hidden rounded-[2rem] border" data-reveal>
-              <Image src={entry.data.heroImage} alt={entry.data.title} class="h-full w-full object-cover" />
+            <div class="reference-detail__media overflow-hidden rounded-[2.15rem] border" data-reveal>
+              <Image src={entry.data.heroImage} alt={entry.data.title} class="reference-detail__image h-full w-full object-cover" />
             </div>
           )}
           <MetaList
@@ -47,9 +87,23 @@ const { Content } = await render(entry);
           />
         </aside>
 
-        <main data-reveal>
-          <div class="reference-detail__prose prose prose-lg max-w-none">
+        <main class="reference-detail__content" data-reveal>
+          <div class="reference-detail__content-shell rounded-[2.3rem] border border-slate-200/85 bg-white/92 px-7 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:px-10 sm:py-10 lg:px-12 lg:py-12">
+            <a href={projectsHref} class="reference-detail__back inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500 transition hover:text-blue-600">
+              <span aria-hidden="true">←</span>
+              <span>Zurück zur Übersicht</span>
+            </a>
+
+            <div class="reference-detail__content-head mt-8 border-b border-slate-200/85 pb-8">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.28em] text-blue-600">Projektbeschreibung</p>
+              <p class="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+                Tragwerksplanung, konstruktive Durcharbeitung und technische Einordnung des Projekts.
+              </p>
+            </div>
+
+            <div class="reference-detail__prose prose prose-lg mt-10 max-w-none">
             <Content />
+            </div>
           </div>
         </main>
       </div>

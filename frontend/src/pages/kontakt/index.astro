@@ -3,13 +3,29 @@ import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactBlock from '../../components/blocks/ContactBlock.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { withBase } from '../../lib/withBase';
 
 const settings = await getEntry('settings', 'global');
+const seoBase = Astro.site ?? Astro.url;
+const contactStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Kontakt',
+  url: new URL(withBase('/kontakt'), seoBase).toString(),
+  mainEntity: {
+    '@type': 'Organization',
+    name: settings?.data.siteTitle || 'Tappauf ZT GmbH',
+    email: settings?.data.email,
+    telephone: settings?.data.phone,
+    address: settings?.data.address,
+  },
+};
 ---
 
 <BaseLayout
   title="Kontakt in Graz | Tappauf ZT"
   description="Kontakt zur Tappauf ZT GmbH in Graz fuer Anfragen zu Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau."
+  structuredData={contactStructuredData}
 >
   <main class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">

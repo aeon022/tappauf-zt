@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
+import { withBase } from '../../lib/withBase';
 
 export async function getStaticPaths() {
   const entries = await getCollection('jobs');
@@ -47,12 +48,26 @@ const jobPostingData = {
   },
   directApply: true,
 };
+const seoBase = Astro.site ?? Astro.url;
+const jobStructuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: new URL(withBase('/'), seoBase).toString() },
+      { '@type': 'ListItem', position: 2, name: 'Jobs', item: new URL(withBase('/jobs'), seoBase).toString() },
+      { '@type': 'ListItem', position: 3, name: entry.data.title, item: new URL(withBase(`/jobs/${entry.id}`), seoBase).toString() },
+    ],
+  },
+  jobPostingData,
+];
 ---
 
 <BaseLayout
   title={`${entry.data.title} | Jobs in Graz | Tappauf ZT`}
   description={entry.data.summary || `Offene Position ${entry.data.title} bei Tappauf ZT in Graz.`}
-  structuredData={jobPostingData}
+  structuredData={jobStructuredData}
+  noindex={entry.data.status === 'archiviert'}
 >
   <article class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-5xl px-6 lg:px-8">

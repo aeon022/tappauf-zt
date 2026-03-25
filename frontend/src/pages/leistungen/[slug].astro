@@ -15,11 +15,45 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const seoBase = Astro.site ?? Astro.url;
+const serviceUrl = new URL(withBase(`/leistungen/${entry.id}`), seoBase).toString();
+const contactUrl = new URL(withBase('/kontakt'), seoBase).toString();
+const serviceStructuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: new URL(withBase('/'), seoBase).toString() },
+      { '@type': 'ListItem', position: 2, name: 'Leistungen', item: new URL(withBase('/leistungen'), seoBase).toString() },
+      { '@type': 'ListItem', position: 3, name: entry.data.title, item: serviceUrl },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: entry.data.title,
+    description: entry.data.summary,
+    serviceType: entry.data.title,
+    provider: {
+      '@type': 'Organization',
+      name: 'Tappauf ZT GmbH',
+      areaServed: 'AT',
+    },
+    areaServed: 'AT',
+    url: serviceUrl,
+    image: entry.data.image?.src ? new URL(entry.data.image.src, seoBase).toString() : undefined,
+    offers: {
+      '@type': 'Offer',
+      url: contactUrl,
+    },
+  },
+];
 ---
 <BaseLayout
   title={`${entry.data.title} | Tragwerksplanung | Tappauf ZT`}
   description={`${entry.data.title}: ${entry.data.summary}`}
   ogImage={entry.data.image}
+  structuredData={serviceStructuredData}
 >
   <article class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">

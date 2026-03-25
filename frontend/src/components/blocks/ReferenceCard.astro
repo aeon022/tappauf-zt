@@ -14,7 +14,8 @@ const categoryLabels = {
   bruecken: 'Brueckenbau',
   sonderprojekte: 'Sonderprojekte',
 } as const;
-const categoryLabel = categoryLabels[category] ?? category;
+const categoryKey = (category ?? 'industrie') as keyof typeof categoryLabels;
+const categoryLabel = categoryLabels[categoryKey] ?? category ?? '';
 const detailHref = withBase(`/projekte/${project.id}`);
 const previewLabel = client || details || 'Projektvorschau';
 const searchableText = [title, details, client, categoryLabel, year ? String(year) : '']
@@ -25,7 +26,7 @@ const fallbackCode = title
   .split(/\s+/)
   .filter(Boolean)
   .slice(0, 2)
-  .map((chunk) => chunk[0]?.toUpperCase())
+  .map((chunk: string) => chunk[0]?.toUpperCase())
   .join('');
 ---
 

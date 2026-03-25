@@ -267,6 +267,7 @@ const pageData = {
 const extraStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
 const structuredDataPayload = [organizationData, websiteData, pageData, ...extraStructuredData].filter(Boolean);
 const globalCommandIndexJson = JSON.stringify(globalCommandIndex);
+const structuredDataJson = JSON.stringify(structuredDataPayload);
 ---
 <html lang="de">
   <head>
@@ -296,7 +297,7 @@ const globalCommandIndexJson = JSON.stringify(globalCommandIndex);
     <link rel="icon" href={faviconHref} sizes="any" />
     <link rel="icon" href={faviconSvgHref} type="image/svg+xml" />
     <ClientRouter />
-    <script type="application/ld+json" set:html={JSON.stringify(structuredDataPayload)} />
+    <script type="application/ld+json" is:inline set:html={structuredDataJson}></script>
     <script is:inline>
       (() => {
         const key = 'tappauf-theme';
@@ -617,12 +618,15 @@ const globalCommandIndexJson = JSON.stringify(globalCommandIndex);
       </div>
     </footer>
 
-    <script is:inline define:vars={{ globalCommandIndexJson }}>
+    <script id="global-command-index" type="application/json" is:inline set:html={globalCommandIndexJson}></script>
+    <script is:inline>
       const THEME_STORAGE_KEY = 'tappauf-theme';
       const CONTRAST_STORAGE_KEY = 'tappauf-contrast';
       const MOTION_STORAGE_KEY = 'tappauf-motion';
       const COOKIE_CONSENT_STORAGE_KEY = 'tappauf-cookie-consent';
-      const GLOBAL_COMMAND_INDEX = JSON.parse(globalCommandIndexJson);
+      const serializedCommandIndex =
+        document.getElementById('global-command-index')?.textContent ?? '[]';
+      const GLOBAL_COMMAND_INDEX = JSON.parse(serializedCommandIndex);
 
       const getPreferredTheme = () =>
         window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';

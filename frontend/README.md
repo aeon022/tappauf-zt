@@ -4,6 +4,10 @@ Astro-Frontend fuer die Website von Tappauf ZT mit lokalem Keystatic-CMS fuer Re
 
 ## Setup
 
+Voraussetzung:
+
+- Node.js `>= 22.12.0`
+
 ```sh
 npm install
 npm run dev
@@ -17,6 +21,7 @@ Standardmaessig laeuft die Entwicklung unter `http://localhost:4321`.
 | --- | --- |
 | `npm run dev` | Startet die lokale Entwicklungsumgebung inklusive Keystatic |
 | `npm run build` | Erzeugt den statischen Build in `dist/` |
+| `npm run check` | Fuehrt den Astro-Typecheck und die Projekt-Diagnosen aus |
 | `npm run preview` | Zeigt den gebauten Stand lokal an |
 | `npm run astro ...` | Fuehrt Astro-CLI-Befehle aus |
 
@@ -29,6 +34,7 @@ Wichtig:
 - Fuer Redaktion und Inhaltsbearbeitung immer `npm run dev` verwenden.
 - Nach Aenderungen an `keystatic.config.mjs` den Dev-Server neu starten.
 - Im statischen Build oder in `preview` ist Keystatic nicht als Redaktionsoberflaeche vorgesehen.
+- Keystatic baut aktuell auch unter Astro 6, deklariert die Kompatibilitaet aber noch nicht offiziell per Peer-Dependency. Das sollte bei Updates von `@keystatic/astro` im Blick bleiben.
 
 ## Inhaltsstruktur
 

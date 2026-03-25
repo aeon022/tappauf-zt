@@ -1,6 +1,3 @@
 ---
-import { withBase } from '../../lib/withBase';
-
-const datenschutzPath = withBase('/datenschutz');
-return Astro.redirect(datenschutzPath, 301);
+return Astro.redirect('/datenschutz', 301);
 ---

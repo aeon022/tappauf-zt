@@ -1,6 +1,7 @@
 // Dateipfad: frontend/src/content.config.ts
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 const orderedSchema = z.object({
   title: z.string(),
@@ -27,7 +28,7 @@ const team = defineCollection({
     role: z.string(),
     qualification: z.string().optional(),
     phone: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z.email().optional(),
     image: image().optional(),
     order: z.number().default(0),
   }),
@@ -81,7 +82,7 @@ const settings = defineCollection({
     logoAlt: z.string().optional(),
     siteDescription: z.string(),
     metaDescription: z.string(),
-    email: z.string().email(),
+    email: z.email(),
     phone: z.string(),
     address: z.string(),
     googleMapsEmbed: z.string(),
@@ -106,7 +107,7 @@ const jobs = defineCollection({
     location: z.string().optional(),
     workload: z.string().optional(),
     employmentType: z.string().optional(),
-    applyEmail: z.string().email().optional(),
+    applyEmail: z.email().optional(),
   }),
 });
 

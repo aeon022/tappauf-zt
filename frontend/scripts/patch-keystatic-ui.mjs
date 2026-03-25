@@ -1,16 +1,29 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const target = path.resolve('node_modules/@keystatic/core/dist/keystatic-core-ui.js');
+const patchFile = (target, transform, label) => {
+  if (!fs.existsSync(target)) {
+    console.warn(`[patch-keystatic-ui] File not found: ${target}`);
+    return;
+  }
 
-if (!fs.existsSync(target)) {
-  console.warn(`[patch-keystatic-ui] File not found: ${target}`);
-  process.exit(0);
-}
+  const source = fs.readFileSync(target, 'utf8');
+  const next = transform(source);
 
-let source = fs.readFileSync(target, 'utf8');
+  if (next !== source) {
+    fs.writeFileSync(target, next);
+    console.log(`[patch-keystatic-ui] Patched ${label}`);
+    return;
+  }
 
-const originalColumns = `      return [...(hideStatusColumn ? [] : [{
+  console.log(`[patch-keystatic-ui] No changes needed for ${label}`);
+};
+
+const coreUiTarget = path.resolve('node_modules/@keystatic/core/dist/keystatic-core-ui.js');
+patchFile(
+  coreUiTarget,
+  (source) => {
+    const originalColumns = `      return [...(hideStatusColumn ? [] : [{
         name: 'Status',
         key: STATUS,
         minWidth: 32,
@@ -20,14 +33,14 @@ const originalColumns = `      return [...(hideStatusColumn ? [] : [{
         key: SLUG
       }, ...collection.columns.map(column => {`;
 
-const patchedColumns = `      return [...(hideStatusColumn ? [] : [{
+    const patchedColumns = `      return [...(hideStatusColumn ? [] : [{
         name: 'Status',
         key: STATUS,
         minWidth: 32,
         width: 32
       }]), ...collection.columns.map(column => {`;
 
-const originalRowBlock = `            children: [...(hideStatusColumn ? [] : [statusCell]), nameCell, ...collection.columns.map(column_0 => {
+    const originalRowBlock = `            children: [...(hideStatusColumn ? [] : [statusCell]), nameCell, ...collection.columns.map(column_0 => {
               var _item_0$data;
               let val;
               val = (_item_0$data = item_0.data) === null || _item_0$data === void 0 ? void 0 : _item_0$data[column_0];
@@ -46,7 +59,7 @@ const originalRowBlock = `            children: [...(hideStatusColumn ? [] : [st
             })]
           }, 'key:' + item_0.name);`;
 
-const patchedRowBlock = `            children: [...(hideStatusColumn ? [] : [statusCell]), ...collection.columns.map(column_0 => {
+    const patchedRowBlock = `            children: [...(hideStatusColumn ? [] : [statusCell]), ...collection.columns.map(column_0 => {
               var _item_0$data;
               let val;
               val = (_item_0$data = item_0.data) === null || _item_0$data === void 0 ? void 0 : _item_0$data[column_0];
@@ -65,13 +78,29 @@ const patchedRowBlock = `            children: [...(hideStatusColumn ? [] : [sta
             }), nameCell]
           }, 'key:' + item_0.name);`;
 
-if (source.includes(originalColumns)) {
-  source = source.replace(originalColumns, patchedColumns);
-}
+    let next = source;
 
-if (source.includes(originalRowBlock)) {
-  source = source.replace(originalRowBlock, patchedRowBlock);
-}
+    if (next.includes(originalColumns)) {
+      next = next.replace(originalColumns, patchedColumns);
+    }
 
-fs.writeFileSync(target, source);
-console.log('[patch-keystatic-ui] Patched column order in keystatic-core-ui.js');
+    if (next.includes(originalRowBlock)) {
+      next = next.replace(originalRowBlock, patchedRowBlock);
+    }
+
+    return next;
+  },
+  'column order in keystatic-core-ui.js'
+);
+
+const astroUiTarget = path.resolve('node_modules/@keystatic/astro/dist/keystatic-astro-ui.js');
+patchFile(
+  astroUiTarget,
+  (source) => {
+    const originalEnvLine = "  value: import.meta.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG";
+    const patchedEnvLine =
+      "  value: typeof import.meta !== 'undefined' && import.meta.env ? import.meta.env.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG : undefined";
+    return source.includes(originalEnvLine) ? source.replace(originalEnvLine, patchedEnvLine) : source;
+  },
+  'Astro 6 env guard in keystatic-astro-ui.js'
+);

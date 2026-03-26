@@ -268,6 +268,36 @@ const extraStructuredData = Array.isArray(structuredData) ? structuredData : [st
 const structuredDataPayload = [organizationData, websiteData, pageData, ...extraStructuredData].filter(Boolean);
 const globalCommandIndexJson = JSON.stringify(globalCommandIndex);
 const structuredDataJson = JSON.stringify(structuredDataPayload);
+const escapeScriptContent = (value: string) => value.replace(/<\/script/gi, '<\\/script');
+const structuredDataScriptTag = `<script type="application/ld+json">${escapeScriptContent(structuredDataJson)}<\/script>`;
+const themeInitScriptTag = `<script>(() => {
+  const key = 'tappauf-theme';
+  const root = document.documentElement;
+  const validModes = new Set(['light', 'dark', 'system']);
+
+  const getPreferredTheme = () =>
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+  const getStoredThemeMode = () => {
+    try {
+      const value = localStorage.getItem(key);
+      return validModes.has(value) ? value : null;
+    } catch {
+      return null;
+    }
+  };
+
+  const applyThemeMode = (mode) => {
+    const resolvedTheme = mode === 'system' ? getPreferredTheme() : mode;
+    root.dataset.theme = resolvedTheme;
+    root.dataset.themeMode = mode;
+    root.classList.toggle('dark', resolvedTheme === 'dark');
+  };
+
+  applyThemeMode(getStoredThemeMode() || 'system');
+})();<\/script>`;
+const globalCommandIndexScriptTag = `<script id="global-command-index" type="application/json">${escapeScriptContent(globalCommandIndexJson)}<\/script>`;
+const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase('/scripts/site-ui.js'))};<\/script>`;
 ---
 <html lang="de">
   <head>
@@ -297,31 +327,8 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
     <link rel="icon" href={faviconHref} sizes="any" />
     <link rel="icon" href={faviconSvgHref} type="image/svg+xml" />
     <ClientRouter />
-    <script type="application/ld+json" is:inline set:html={structuredDataJson}></script>
-    <script is:inline>
-      (() => {
-        const key = 'tappauf-theme';
-        const root = document.documentElement;
-
-        const getPreferredTheme = () =>
-          window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-
-        const getStoredTheme = () => {
-          try {
-            return localStorage.getItem(key);
-          } catch {
-            return null;
-          }
-        };
-
-        const applyTheme = (theme) => {
-          root.dataset.theme = theme;
-          root.classList.toggle('dark', theme === 'dark');
-        };
-
-        applyTheme(getStoredTheme() || getPreferredTheme());
-      })();
-    </script>
+    <Fragment set:html={structuredDataScriptTag} />
+    <Fragment set:html={themeInitScriptTag} />
   </head>
   <body class="bg-white text-slate-900 antialiased font-sans selection:bg-blue-100">
     <div class="site-pattern" aria-hidden="true" transition:persist>
@@ -378,7 +385,7 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
             title="Farbschema wechseln"
           >
             <span class="theme-toggle__icon" aria-hidden="true">◐</span>
-            <span class="theme-toggle__label">Dark</span>
+            <span class="theme-toggle__label">System</span>
           </button>
           <button
             type="button"
@@ -434,7 +441,7 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
               title="Farbschema wechseln"
             >
               <span class="theme-toggle__icon" aria-hidden="true">◐</span>
-              <span class="theme-toggle__label">Dark</span>
+              <span class="theme-toggle__label">System</span>
             </button>
             <button
               type="button"
@@ -510,7 +517,7 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
           <div class="reference-command-utility-grid">
             <button type="button" class="reference-command-utility" data-site-command-theme>
               <span class="reference-command-utility__label">Darstellung</span>
-              <span class="reference-command-utility__value" data-site-command-theme-label>Dark Mode</span>
+              <span class="reference-command-utility__value" data-site-command-theme-label>System</span>
             </button>
             <button type="button" class="reference-command-utility" data-site-command-contrast>
               <span class="reference-command-utility__label">Erleichterte Bedienung</span>
@@ -542,6 +549,7 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
             Diese Website verwendet notwendige lokale Speicherungen für Darstellung und Bedienung. Externe Inhalte wie Google Maps werden erst nach deiner Zustimmung geladen.
           </p>
           <div class="cookie-notice__actions">
+            <button type="button" class="cookie-notice__button cookie-notice__button--ghost" data-cookie-reject-external>Ablehnen</button>
             <button type="button" class="cookie-notice__button cookie-notice__button--secondary" data-cookie-accept-necessary>Nur notwendige</button>
             <button type="button" class="cookie-notice__button cookie-notice__button--primary" data-cookie-accept-external>Externe Inhalte erlauben</button>
           </div>
@@ -618,493 +626,7 @@ const structuredDataJson = JSON.stringify(structuredDataPayload);
       </div>
     </footer>
 
-    <script id="global-command-index" type="application/json" is:inline set:html={globalCommandIndexJson}></script>
-    <script is:inline>
-      const THEME_STORAGE_KEY = 'tappauf-theme';
-      const CONTRAST_STORAGE_KEY = 'tappauf-contrast';
-      const MOTION_STORAGE_KEY = 'tappauf-motion';
-      const COOKIE_CONSENT_STORAGE_KEY = 'tappauf-cookie-consent';
-      const serializedCommandIndex =
-        document.getElementById('global-command-index')?.textContent ?? '[]';
-      const GLOBAL_COMMAND_INDEX = JSON.parse(serializedCommandIndex);
-
-      const getPreferredTheme = () =>
-        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-
-      const getStoredTheme = () => {
-        try {
-          return localStorage.getItem(THEME_STORAGE_KEY);
-        } catch {
-          return null;
-        }
-      };
-
-      const persistTheme = (theme) => {
-        try {
-          localStorage.setItem(THEME_STORAGE_KEY, theme);
-        } catch {}
-      };
-
-      const readCookieConsent = () => {
-        try {
-          const raw = localStorage.getItem(COOKIE_CONSENT_STORAGE_KEY);
-          return raw ? JSON.parse(raw) : null;
-        } catch {
-          return null;
-        }
-      };
-
-      const writeCookieConsent = (consent) => {
-        try {
-          localStorage.setItem(COOKIE_CONSENT_STORAGE_KEY, JSON.stringify(consent));
-        } catch {}
-      };
-
-      const syncExternalEmbeds = (consent = readCookieConsent()) => {
-        const externalAllowed = consent?.external === true;
-
-        document.querySelectorAll('[data-external-content]').forEach((container) => {
-          const iframe = container.querySelector('[data-external-iframe]');
-          const placeholder = container.querySelector('[data-external-placeholder]');
-          const src = iframe?.dataset.src;
-
-          if (!iframe || !placeholder || !src) return;
-
-          if (externalAllowed) {
-            if (iframe.getAttribute('src') !== src) {
-              iframe.setAttribute('src', src);
-            }
-            iframe.hidden = false;
-            placeholder.hidden = true;
-          } else {
-            iframe.hidden = true;
-            placeholder.hidden = false;
-            iframe.removeAttribute('src');
-          }
-        });
-      };
-
-      const applyCookieConsent = () => {
-        const notice = document.querySelector('[data-cookie-notice]');
-        const consent = readCookieConsent();
-
-        if (notice) {
-          notice.hidden = Boolean(consent);
-        }
-
-        syncExternalEmbeds(consent);
-      };
-
-      const setThemeMeta = (theme) => {
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) {
-          meta.setAttribute('content', theme === 'dark' ? '#020617' : '#f8fafc');
-        }
-      };
-
-      const applyTheme = (theme) => {
-        const root = document.documentElement;
-        root.dataset.theme = theme;
-        root.classList.toggle('dark', theme === 'dark');
-        setThemeMeta(theme);
-
-        document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
-          const label = button.querySelector('.theme-toggle__label');
-          if (label) label.textContent = theme === 'dark' ? 'Light' : 'Dark';
-          button.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
-        });
-      };
-
-      const applyAccessibilityPreferences = () => {
-        const root = document.documentElement;
-        let contrast = null;
-        let motion = null;
-
-        try {
-          contrast = localStorage.getItem(CONTRAST_STORAGE_KEY);
-          motion = localStorage.getItem(MOTION_STORAGE_KEY);
-        } catch {}
-
-        root.classList.toggle('high-contrast', contrast === 'high');
-        root.classList.toggle('easy-access', contrast === 'high');
-        root.classList.toggle('reduced-motion', motion === 'reduce');
-        const contrastLabel = document.querySelector('[data-site-command-contrast-label]');
-        const motionLabel = document.querySelector('[data-site-command-motion-label]');
-        const themeLabel = document.querySelector('[data-site-command-theme-label]');
-
-        if (contrastLabel) {
-          contrastLabel.textContent = contrast === 'high' ? 'Aktiv' : 'Aktivieren';
-        }
-
-        if (motionLabel) {
-          motionLabel.textContent = motion === 'reduce' ? 'Einschalten' : 'Ausschalten';
-        }
-
-        if (themeLabel) {
-          themeLabel.textContent = root.dataset.theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-        }
-      };
-
-      const changeTheme = (nextTheme) => {
-        persistTheme(nextTheme);
-        applyTheme(nextTheme);
-      };
-
-      const setupThemeToggle = () => {
-        const root = document.documentElement;
-        const buttons = document.querySelectorAll('[data-theme-toggle]');
-        const media = window.matchMedia('(prefers-color-scheme: dark)');
-
-        applyTheme(getStoredTheme() || root.dataset.theme || getPreferredTheme());
-
-        buttons.forEach((button) => {
-          if (button.dataset.themeBound === 'true') return;
-          button.dataset.themeBound = 'true';
-
-          button.addEventListener('click', () => {
-            const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-            changeTheme(next);
-          });
-        });
-
-        if (!window.__tappaufThemeMediaBound) {
-          media.addEventListener('change', (event) => {
-            if (getStoredTheme()) return;
-            applyTheme(event.matches ? 'dark' : 'light');
-          });
-          window.__tappaufThemeMediaBound = true;
-        }
-      };
-
-      const setupMobileMenu = () => {
-        const root = document.documentElement;
-        const menu = document.querySelector('[data-mobile-menu]');
-        if (!menu || menu.dataset.menuBound === 'true') return;
-
-        const openButtons = document.querySelectorAll('[data-mobile-menu-open]');
-        const closeButtons = document.querySelectorAll('[data-mobile-menu-close]');
-        const links = document.querySelectorAll('[data-mobile-menu-link]');
-
-        const syncButtons = (expanded) => {
-          openButtons.forEach((button) => button.setAttribute('aria-expanded', expanded ? 'true' : 'false'));
-        };
-
-        const openMenu = () => {
-          menu.hidden = false;
-          menu.setAttribute('aria-hidden', 'false');
-          root.classList.add('mobile-menu-open');
-          syncButtons(true);
-        };
-
-        const closeMenu = () => {
-          menu.setAttribute('aria-hidden', 'true');
-          root.classList.remove('mobile-menu-open');
-          syncButtons(false);
-          window.setTimeout(() => {
-            if (menu.getAttribute('aria-hidden') === 'true') {
-              menu.hidden = true;
-            }
-          }, 260);
-        };
-
-        openButtons.forEach((button) => {
-          button.addEventListener('click', openMenu);
-        });
-
-        closeButtons.forEach((button) => {
-          button.addEventListener('click', closeMenu);
-        });
-
-        links.forEach((link) => {
-          link.addEventListener('click', closeMenu);
-        });
-
-        document.addEventListener('keydown', (event) => {
-          if (event.key === 'Escape' && menu.getAttribute('aria-hidden') === 'false') {
-            closeMenu();
-          }
-        });
-
-        document.addEventListener('astro:before-swap', closeMenu);
-        menu.dataset.menuBound = 'true';
-      };
-
-      const setupReveal = () => {
-        const items = document.querySelectorAll('[data-reveal]');
-        if (!items.length || !('IntersectionObserver' in window)) return;
-
-        document.documentElement.classList.add('reveal-enhanced');
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-revealed');
-              }
-            }
-          },
-          { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
-        );
-
-        items.forEach((item, index) => {
-          item.style.setProperty('--reveal-delay', `${index % 6 * 70}ms`);
-          observer.observe(item);
-        });
-      };
-
-      const setupCookieNotice = () => {
-        const notice = document.querySelector('[data-cookie-notice]');
-        const acceptNecessaryButtons = document.querySelectorAll('[data-cookie-accept-necessary]');
-        const acceptExternalButtons = document.querySelectorAll('[data-cookie-accept-external]');
-        const enableExternalButtons = document.querySelectorAll('[data-cookie-enable-external]');
-
-        const saveConsent = (external) => {
-          writeCookieConsent({
-            necessary: true,
-            external,
-            updatedAt: new Date().toISOString(),
-          });
-          if (notice) {
-            notice.hidden = true;
-          }
-          syncExternalEmbeds(readCookieConsent());
-        };
-
-        acceptNecessaryButtons.forEach((button) => {
-          if (button.dataset.cookieBound === 'true') return;
-          button.dataset.cookieBound = 'true';
-          button.addEventListener('click', () => saveConsent(false));
-        });
-
-        acceptExternalButtons.forEach((button) => {
-          if (button.dataset.cookieBound === 'true') return;
-          button.dataset.cookieBound = 'true';
-          button.addEventListener('click', () => saveConsent(true));
-        });
-
-        enableExternalButtons.forEach((button) => {
-          if (button.dataset.cookieBound === 'true') return;
-          button.dataset.cookieBound = 'true';
-          button.addEventListener('click', () => saveConsent(true));
-        });
-
-        applyCookieConsent();
-      };
-
-      const setupGlobalCommandPalette = () => {
-        const dialog = document.querySelector('[data-site-command-dialog]');
-        const openButtons = document.querySelectorAll('[data-site-command-open]');
-        const closeButton = document.querySelector('[data-site-command-close]');
-        const input = document.querySelector('[data-site-command-input]');
-        const resultsNode = document.querySelector('[data-site-command-results]');
-        const emptyNode = document.querySelector('[data-site-command-empty]');
-        const themeButton = document.querySelector('[data-site-command-theme]');
-        const contrastButton = document.querySelector('[data-site-command-contrast]');
-        const motionButton = document.querySelector('[data-site-command-motion]');
-
-        if (!dialog || !input || !resultsNode || !emptyNode) return;
-
-        let activeIndex = 0;
-        const normalize = (value) => (value || '').trim().toLowerCase();
-
-        const renderResults = (value) => {
-          const query = normalize(value);
-          const tokens = query.split(/\s+/).filter(Boolean);
-          if (!tokens.length) {
-            resultsNode.innerHTML = '';
-            resultsNode.hidden = true;
-            emptyNode.hidden = true;
-            activeIndex = 0;
-            return [];
-          }
-
-          const results = GLOBAL_COMMAND_INDEX.filter((entry) => {
-            return tokens.every((token) =>
-              entry.search.includes(token) ||
-              entry.title.toLowerCase().includes(token) ||
-              entry.type.toLowerCase().includes(token) ||
-              entry.section.toLowerCase().includes(token)
-            );
-          }).sort((a, b) => {
-            const aTitle = a.title.toLowerCase();
-            const bTitle = b.title.toLowerCase();
-            const aPageBonus = a.type === 'Seite' ? 30 : 0;
-            const bPageBonus = b.type === 'Seite' ? 30 : 0;
-            const aExact = tokens.some((token) => aTitle === token || aTitle.startsWith(token)) ? 20 : 0;
-            const bExact = tokens.some((token) => bTitle === token || bTitle.startsWith(token)) ? 20 : 0;
-            const aTitleHits = tokens.filter((token) => aTitle.includes(token)).length;
-            const bTitleHits = tokens.filter((token) => bTitle.includes(token)).length;
-            const aScore = aPageBonus + aExact + aTitleHits;
-            const bScore = bPageBonus + bExact + bTitleHits;
-            return bScore - aScore;
-          }).slice(0, 10);
-
-          if (!results.length) {
-            resultsNode.innerHTML = '';
-            resultsNode.hidden = true;
-            emptyNode.hidden = false;
-            return results;
-          }
-
-          resultsNode.innerHTML = results.map((entry, index) => `
-            <button
-              type="button"
-              class="reference-command-result${index === activeIndex ? ' reference-command-result--active' : ''}"
-              data-site-command-result
-              data-site-command-href="${entry.href}"
-            >
-              <span class="reference-command-result__title">${entry.title}</span>
-              <span class="reference-command-result__meta">${[entry.type, entry.section, entry.description].filter(Boolean).join(' · ')}</span>
-            </button>
-          `).join('');
-          resultsNode.hidden = false;
-          emptyNode.hidden = true;
-          return results;
-        };
-
-        const openDialog = () => {
-          dialog.hidden = false;
-          dialog.setAttribute('aria-hidden', 'false');
-          document.documentElement.classList.add('reference-command-open');
-          activeIndex = 0;
-          input.value = '';
-          resultsNode.innerHTML = '';
-          resultsNode.hidden = true;
-          emptyNode.hidden = true;
-          applyAccessibilityPreferences();
-          input.focus();
-        };
-
-        window.__tappaufOpenCommandPalette = openDialog;
-
-        const closeDialog = () => {
-          dialog.setAttribute('aria-hidden', 'true');
-          document.documentElement.classList.remove('reference-command-open');
-          window.setTimeout(() => {
-            if (dialog.getAttribute('aria-hidden') === 'true') {
-              dialog.hidden = true;
-            }
-          }, 220);
-        };
-
-        openButtons.forEach((button) => {
-          if (button.dataset.commandBound === 'true') return;
-          button.dataset.commandBound = 'true';
-          button.addEventListener('click', openDialog);
-        });
-
-        if (closeButton && closeButton.dataset.commandBound !== 'true') {
-          closeButton.dataset.commandBound = 'true';
-          closeButton.addEventListener('click', closeDialog);
-        }
-
-        if (dialog.dataset.commandBound === 'true') return;
-        dialog.dataset.commandBound = 'true';
-
-        dialog.addEventListener('click', (event) => {
-          if (event.target === dialog) closeDialog();
-        });
-
-        resultsNode.addEventListener('click', (event) => {
-          const target = event.target.closest('[data-site-command-result]');
-          if (!target) return;
-          const href = target.dataset.siteCommandHref;
-          closeDialog();
-          if (href) window.location.href = href;
-        });
-
-        input.addEventListener('input', () => {
-          activeIndex = 0;
-          renderResults(input.value);
-        });
-
-        input.addEventListener('keydown', (event) => {
-          const items = Array.from(resultsNode.querySelectorAll('[data-site-command-result]'));
-          if (event.key === 'ArrowDown' && items.length) {
-            event.preventDefault();
-            activeIndex = (activeIndex + 1) % items.length;
-            renderResults(input.value);
-          } else if (event.key === 'ArrowUp' && items.length) {
-            event.preventDefault();
-            activeIndex = (activeIndex - 1 + items.length) % items.length;
-            renderResults(input.value);
-          } else if (event.key === 'Enter') {
-            event.preventDefault();
-            items[activeIndex]?.click();
-          } else if (event.key === 'Escape') {
-            closeDialog();
-          }
-        });
-
-        themeButton?.addEventListener('click', () => {
-          const root = document.documentElement;
-          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-          changeTheme(next);
-          window.setTimeout(applyAccessibilityPreferences, 30);
-        });
-
-        contrastButton?.addEventListener('click', () => {
-          const root = document.documentElement;
-          const next = root.classList.contains('high-contrast') ? 'normal' : 'high';
-          root.classList.toggle('high-contrast', next === 'high');
-          root.classList.toggle('easy-access', next === 'high');
-          try {
-            localStorage.setItem(CONTRAST_STORAGE_KEY, next === 'high' ? 'high' : 'normal');
-          } catch {}
-          applyAccessibilityPreferences();
-        });
-
-        motionButton?.addEventListener('click', () => {
-          const root = document.documentElement;
-          const next = root.classList.contains('reduced-motion') ? 'full' : 'reduce';
-          root.classList.toggle('reduced-motion', next === 'reduce');
-          try {
-            localStorage.setItem(MOTION_STORAGE_KEY, next === 'reduce' ? 'reduce' : 'full');
-          } catch {}
-          applyAccessibilityPreferences();
-        });
-      };
-
-      const bindGlobalCommandShortcut = () => {
-        if (window.__tappaufGlobalCommandHandler) {
-          document.removeEventListener('keydown', window.__tappaufGlobalCommandHandler);
-        }
-
-        window.__tappaufGlobalCommandHandler = (event) => {
-          const dialog = document.querySelector('[data-site-command-dialog]');
-          if (!dialog) return;
-
-          if (event.ctrlKey && !event.metaKey && !event.altKey && event.key.toLowerCase() === 'k') {
-            event.preventDefault();
-            window.__tappaufOpenCommandPalette?.();
-          } else if (event.key === 'Escape' && dialog.getAttribute('aria-hidden') === 'false') {
-            document.querySelector('[data-site-command-close]')?.click();
-          }
-        };
-
-        document.addEventListener('keydown', window.__tappaufGlobalCommandHandler);
-      };
-
-      setupThemeToggle();
-      applyAccessibilityPreferences();
-      applyCookieConsent();
-      setupMobileMenu();
-      setupCookieNotice();
-      setupGlobalCommandPalette();
-      bindGlobalCommandShortcut();
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(setupReveal, { timeout: 1200 });
-      } else {
-        window.setTimeout(setupReveal, 120);
-      }
-      document.addEventListener('astro:page-load', setupThemeToggle);
-      document.addEventListener('astro:page-load', applyAccessibilityPreferences);
-      document.addEventListener('astro:page-load', applyCookieConsent);
-      document.addEventListener('astro:page-load', setupMobileMenu);
-      document.addEventListener('astro:page-load', setupCookieNotice);
-      document.addEventListener('astro:page-load', setupGlobalCommandPalette);
-      document.addEventListener('astro:page-load', bindGlobalCommandShortcut);
-      document.addEventListener('astro:page-load', setupReveal);
-    </script>
+    <Fragment set:html={globalCommandIndexScriptTag} />
+    <Fragment set:html={siteUiScriptTag} />
   </body>
 </html>

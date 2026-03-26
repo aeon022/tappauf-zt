@@ -1,8 +1,24 @@
 // Dateipfad: frontend/keystatic.config.ts
 import { config, collection, fields, singleton } from '@keystatic/core';
+import { jsx } from 'react/jsx-runtime';
 
 export default config({
   storage: { kind: 'local' },
+  ui: {
+    brand: {
+      name: 'Tappauf ZT',
+      mark: () =>
+        jsx('img', {
+          src: '/tappauf-zt-logo.webp',
+          alt: 'Tappauf ZT',
+          style: {
+            display: 'block',
+            height: '2rem',
+            width: 'auto',
+          },
+        }),
+    },
+  },
   singletons: {
     settings: singleton({
       label: 'Global Settings',

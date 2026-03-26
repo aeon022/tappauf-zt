@@ -1,10 +1,4 @@
-@import "@fontsource/ibm-plex-sans/400.css";
-@import "@fontsource/ibm-plex-sans/500.css";
-@import "@fontsource/ibm-plex-sans/600.css";
-@import "@fontsource/ibm-plex-sans/700.css";
-@import "@fontsource/ibm-plex-sans-condensed/500.css";
-@import "@fontsource/ibm-plex-sans-condensed/600.css";
-@import "@fontsource/ibm-plex-sans-condensed/700.css";
+@import "./fonts.css";
 @import "tailwindcss";
 
 @theme {
@@ -210,6 +204,13 @@ span {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+.cookie-notice__button--ghost {
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.5);
+  color: rgb(71 85 105);
+  flex: 0.9 1 0;
+}
+
 .cookie-notice__link,
 .contact-embed-placeholder__link {
   display: inline-flex;
@@ -275,6 +276,13 @@ span {
   color: rgb(37 99 235);
   transform: translateY(-1px);
   box-shadow: 0 14px 26px rgba(148, 163, 184, 0.14);
+}
+
+.cookie-notice__button--ghost:hover {
+  border-color: rgba(148, 163, 184, 0.36);
+  color: rgb(15 23 42);
+  background: rgba(248, 250, 252, 0.82);
+  transform: translateY(-1px);
 }
 
 .command-trigger {
@@ -729,6 +737,7 @@ html[data-theme="dark"] .contact-embed-placeholder {
 
 html[data-theme="dark"] .cookie-notice__title,
 html[data-theme="dark"] .cookie-notice__button--secondary,
+html[data-theme="dark"] .cookie-notice__button--ghost,
 html[data-theme="dark"] .contact-embed-placeholder__link {
   color: rgb(248 250 252);
 }
@@ -742,6 +751,12 @@ html[data-theme="dark"] .contact-embed-placeholder__link {
 html[data-theme="dark"] .cookie-notice__button--secondary {
   border-color: rgba(51, 65, 85, 0.88);
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
+}
+
+html[data-theme="dark"] .cookie-notice__button--ghost {
+  border-color: rgba(51, 65, 85, 0.88);
+  background: rgba(15, 23, 42, 0.55);
+  color: rgb(203 213 225);
 }
 
 html[data-theme="dark"] .cookie-notice__button--primary,
@@ -837,6 +852,8 @@ html[data-theme="dark"] footer {
 }
 
 html[data-theme="dark"] .bg-white,
+html[data-theme="dark"] .bg-white\/80,
+html[data-theme="dark"] .bg-white\/88,
 html[data-theme="dark"] .bg-white\/92,
 html[data-theme="dark"] .bg-white\/95,
 html[data-theme="dark"] .bg-slate-50,
@@ -875,17 +892,22 @@ html[data-theme="dark"] .border-b.border-slate-200 {
 
 html[data-theme="dark"] .text-slate-950,
 html[data-theme="dark"] .text-slate-900 {
-  color: rgb(241 245 249) !important;
+  color: rgb(248 250 252) !important;
+}
+
+html[data-theme="dark"] .text-slate-300,
+html[data-theme="dark"] .text-slate-200 {
+  color: rgb(226 232 240) !important;
 }
 
 html[data-theme="dark"] .text-slate-700,
 html[data-theme="dark"] .text-slate-600 {
-  color: rgb(203 213 225) !important;
+  color: rgb(226 232 240) !important;
 }
 
 html[data-theme="dark"] .text-slate-500,
 html[data-theme="dark"] .text-slate-400 {
-  color: rgb(148 163 184) !important;
+  color: rgb(203 213 225) !important;
 }
 
 html[data-theme="dark"] .hover\:text-slate-950:hover,

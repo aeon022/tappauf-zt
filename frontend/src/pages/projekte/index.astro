@@ -71,9 +71,24 @@ const referenceFiltersScriptTag = `<script type="module">import ${JSON.stringify
           </div>
 
           <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-2">
-            <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50/90 p-5">
-              <p class="text-[10px] font-mono uppercase tracking-[0.22em] text-slate-500">Projekte</p>
-              <p class="mt-4 font-display text-4xl font-semibold tracking-[-0.04em] text-slate-950">{sortedProjects.length}</p>
+            <div class="rounded-[1.75rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(248,250,252,0.98),rgba(241,245,249,0.92))] p-5">
+              <p class="text-[10px] font-mono uppercase tracking-[0.22em] text-slate-500">Tragwerk</p>
+              <div class="mt-4 overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white/80 p-4 shadow-sm" aria-hidden="true">
+                <svg viewBox="0 0 220 96" class="h-16 w-full text-slate-950" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 72H204" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M28 72V58M192 72V58" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M28 58H192" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                  <path d="M28 58L54 34L80 58L110 22L140 58L166 34L192 58" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M54 34L54 58M80 58L80 58M110 22L110 58M140 58L140 58M166 34L166 58" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" />
+                  <circle cx="28" cy="58" r="3" fill="currentColor" />
+                  <circle cx="54" cy="34" r="3" fill="#2563EB" />
+                  <circle cx="80" cy="58" r="3" fill="#2563EB" />
+                  <circle cx="110" cy="22" r="3" fill="#2563EB" />
+                  <circle cx="140" cy="58" r="3" fill="#2563EB" />
+                  <circle cx="166" cy="34" r="3" fill="#2563EB" />
+                  <circle cx="192" cy="58" r="3" fill="currentColor" />
+                </svg>
+              </div>
             </div>
             <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50/90 p-5">
               <p class="text-[10px] font-mono uppercase tracking-[0.22em] text-slate-500">Kategorien</p>

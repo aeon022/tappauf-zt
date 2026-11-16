@@ -30,7 +30,7 @@ Inhalt von `tappauf-website.zip` in die Wurzel der Domain (den Ordner `lander/` 
 - Sicherung: *Einstellungen → Pod → Backup* (mit Medien) regelmäßig herunterladen.
 
 ## Offen vor dem Livegang (nicht von mir erfindbar)
-- **Impressum:** enthält nur Name, Adresse, E-Mail, Telefon. Für Österreich fehlen üblicherweise Firmenbuchnummer und -gericht, UID, Unternehmensgegenstand, Kammer/Berufsrecht und Aufsichtsbehörde. Bitte von Tappauf bestätigen und in Lander («Allgemein → Firmendaten») ergänzen lassen.
+- **Impressum:** enthält Name, Adresse, E-Mail, Telefon, Firmenbuchnummer (FN 600142 m) und UID (ATU 79188549). Diese zwei Nummern stehen fest in der Seitenvorlage (`frontend/src/pages/impressum/index.astro`), nicht in Lander. Von Tappauf bestätigen lassen; falls gewünscht, außerdem Unternehmensgegenstand, Kammer/Berufsrecht und Aufsichtsbehörde ergänzen (Rechtsberatung klären, ich erfinde hier nichts).
 - **Kontaktdaten** von Tappauf bestätigen lassen (E-Mail, Telefonnummern im Team).
 - **Logo** als Vektor (SVG), derzeit 369 px breit.
 - **Fotos** in hoher Auflösung (Hero ab 1920 px, Projekte ab 1600 px, Team einheitlich); viele Referenzen haben kein Foto.

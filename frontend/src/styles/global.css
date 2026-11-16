@@ -2153,3 +2153,30 @@ html.reduced-motion .hx *, html[data-reduce-motion] .hx * { transition: none !im
 html[data-theme="dark"] .site-nav { background: #0c0c0b; border-color: rgba(244,243,240,.14); }
 .site-nav .command-trigger, .site-nav .theme-toggle { text-transform: none; letter-spacing: 0; font-size: .9rem; font-weight: 500; }
 .site-nav .command-trigger__label, .site-nav .theme-toggle__label { text-transform: none; letter-spacing: 0; }
+
+/* Kopfzeile: oben volle Leiste, beim Scrollen eine eckige Glas-Insel */
+.site-nav { height: 5rem; box-sizing: border-box; transition: background-color .3s ease, border-color .3s ease, padding .35s ease; }
+.site-nav__bar { transition: max-width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1), margin-top .35s cubic-bezier(.2,.8,.2,1), background-color .3s ease, box-shadow .3s ease, border-color .3s ease, padding .35s ease; border: 1px solid transparent; }
+html[data-scrolled] .site-nav { background: transparent; border-color: transparent; pointer-events: none; padding-top: .75rem; }
+html[data-scrolled] .site-nav__bar {
+  pointer-events: auto;
+  max-width: 62rem;
+  width: calc(100% - 1.5rem);
+  height: 3.5rem;
+  padding-inline: 1rem;
+  border-radius: 0;
+  border-color: rgba(17, 17, 16, .14);
+  background: rgba(255, 255, 255, .58);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: 0 10px 34px -14px rgba(17, 17, 16, .35);
+}
+html[data-theme="dark"][data-scrolled] .site-nav__bar { background: rgba(12, 12, 11, .55); border-color: rgba(244, 243, 240, .18); box-shadow: 0 10px 34px -14px rgba(0, 0, 0, .7); }
+html[data-scrolled] .site-nav__bar .site-logo { height: 1.75rem; mix-blend-mode: multiply; }
+html[data-theme="dark"][data-scrolled] .site-nav__bar .site-logo { mix-blend-mode: normal; }
+html[data-scrolled] .site-nav__bar .command-trigger, html[data-scrolled] .site-nav__bar .theme-toggle { border-radius: 0; padding-inline: .6rem; }
+html[data-scrolled] .site-nav__bar .theme-toggle__label { display: none; }
+html[data-scrolled] .site-nav__bar .nav-link { font-size: 14px; }
+@media (max-width: 1023px) { html[data-scrolled] .site-nav__bar { width: calc(100% - 1rem); } }
+@media (prefers-reduced-motion: reduce) { .site-nav, .site-nav__bar { transition: none; } }
+html.reduced-motion .site-nav, html.reduced-motion .site-nav__bar { transition: none; }

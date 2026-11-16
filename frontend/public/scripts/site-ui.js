@@ -571,6 +571,16 @@
     document.addEventListener('keydown', window.__tappaufGlobalCommandHandler);
   };
 
+  // Beim Scrollen wird die Kopfzeile zur eckigen Glas-Insel (CSS reagiert auf html[data-scrolled]).
+  const setupScrollIsland = () => {
+    const root = document.documentElement;
+    const update = () => root.toggleAttribute('data-scrolled', window.scrollY > 24);
+    if (window.__tappaufIslandHandler) window.removeEventListener('scroll', window.__tappaufIslandHandler);
+    window.__tappaufIslandHandler = update;
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  };
+
   const runSafely = (fn) => {
     try {
       fn();
@@ -587,6 +597,7 @@
     runSafely(setupCookieNotice);
     runSafely(setupGlobalCommandPalette);
     runSafely(bindGlobalCommandShortcut);
+    runSafely(setupScrollIsland);
 
     if ('requestIdleCallback' in window) {
       window.requestIdleCallback(() => runSafely(setupReveal), { timeout: 1200 });

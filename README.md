@@ -25,7 +25,7 @@ Node ≥ 22.23.4.
 
 ## Lander einrichten (einmalig)
 
-1. Lander-Release (`pakete/lander-0.6.0.zip`) entpacken und den Inhalt nach `/lander/` auf dem Webhost laden, dann `https://www.tappauf-zt.at/lander/public/install.php` öffnen (legt Konfiguration und ersten Admin an). Beim Hochladen der Website (`dist/`) den Ordner `lander/` nicht löschen.
+1. Lander-Release (`pakete/lander-0.6.1.zip`) entpacken und den Inhalt nach `/lander/` auf dem Webhost laden, dann `https://www.tappauf-zt.at/lander/public/install.php` öffnen (legt Konfiguration und ersten Admin an). Beim Hochladen der Website (`dist/`) den Ordner `lander/` nicht löschen.
 2. Inhalte: Lokal mit `frontend/scripts/migrate-to-lander.mjs` aus den früheren Keystatic-Dateien (Git-Verlauf vor „Keystatic entfernt") übertragen und per *Einstellungen → Pod → Backup & Wiederherstellen* (ZIP mit Medien) auf dem Server einspielen.
 3. Ab Lander 0.3.1 aktualisiert sich Lander per Klick (Einstellungen → Pod, ganz unten; der Knopf erscheint nur, wenn es eine neuere Version gibt).
 

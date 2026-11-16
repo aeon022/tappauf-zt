@@ -1,12 +1,12 @@
 # Livegang tappauf-zt.at
 
-Alles Nötige liegt lokal in `pakete/` (nicht im Git): `lander-0.6.0.zip`, `tappauf-lander-inhalte.zip` (Texte, Bilder, PDF, Gruppen, Hinweis-Felder), `tappauf-website.zip` (fertige Seite, auf `https://www.tappauf-zt.at/lander` eingestellt), `ZUGANG.txt` (Lander-Login).
+Alles Nötige liegt lokal in `pakete/` (nicht im Git): `lander-0.6.1.zip`, `tappauf-lander-inhalte.zip` (Texte, Bilder, PDF, Gruppen, Hinweis-Felder), `tappauf-website.zip` (fertige Seite, auf `https://www.tappauf-zt.at/lander` eingestellt), `ZUGANG.txt` (Lander-Login).
 
 ## 0 · Voraussetzungen am Webhost
 PHP 8.1 oder neuer mit `pdo_sqlite`, `zip`, `sodium` und **`gd`** (ohne `gd` liefert Lander Bilder nur in Originalgröße, die Seite wird dann langsam). Apache mit `mod_rewrite` und `AllowOverride All`. Upload-Grenze ab 20 MB für das Inhalts-Paket (sonst Weg über FTP, siehe Schritt 3).
 
 ## 1 · Lander auf `/lander/`
-1. `lander-0.6.0.zip` entpacken, den Inhalt in den Ordner `lander/` der Domain hochladen (neben der Website, nicht darin verschachteln).
+1. `lander-0.6.1.zip` entpacken, den Inhalt in den Ordner `lander/` der Domain hochladen (neben der Website, nicht darin verschachteln).
 2. `https://www.tappauf-zt.at/lander/install.php` öffnen, Benutzer und Passwort wählen. Der Installer schreibt die Konfiguration und löscht sich danach.
 3. Anmelden unter `https://www.tappauf-zt.at/lander/login.html`.
 

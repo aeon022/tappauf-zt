@@ -69,7 +69,7 @@ const jobStructuredData = [
   structuredData={jobStructuredData}
   noindex={entry.data.status === 'archiviert'}
 >
-  <article class="bg-slate-50 py-20 sm:py-28">
+  <main id="top" class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-5xl px-6 lg:px-8">
       <PageIntro eyebrow="Jobs" title={entry.data.title} text={entry.data.summary} />
 
@@ -85,12 +85,12 @@ const jobStructuredData = [
           ]}
         />
 
-        <main data-reveal>
+        <div data-reveal>
           <div class="jobs-content prose prose-slate prose-lg max-w-none">
             <Fragment set:html={html} />
           </div>
-        </main>
+        </div>
       </div>
     </div>
-  </article>
+  </main>
 </BaseLayout>

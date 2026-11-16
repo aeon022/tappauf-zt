@@ -26,7 +26,7 @@ const filtered = items.filter((item) => item.value);
   <dl class="mt-7 space-y-0 text-sm">
     {filtered.map((item) => (
       <div class:list={['meta-list__row py-5', inverse ? 'border-white/10' : 'border-slate-200/85']}>
-        <dt class:list={['text-[11px] font-semibold uppercase tracking-[0.24em]', inverse ? 'text-slate-500' : 'text-slate-400']}>{item.label}</dt>
+        <dt class:list={['text-[11px] font-semibold uppercase tracking-[0.24em]', inverse ? 'text-slate-400' : 'text-slate-600']}>{item.label}</dt>
         <dd class:list={['mt-3 text-base font-semibold leading-7', inverse ? 'text-white' : 'text-slate-900']}>
           {item.href ? <a href={item.href} class:list={[inverse ? 'text-blue-300 hover:text-white' : 'text-blue-600 hover:text-slate-900']}>{item.value}</a> : item.value}
         </dd>

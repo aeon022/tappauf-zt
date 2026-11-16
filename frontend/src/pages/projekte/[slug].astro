@@ -65,7 +65,7 @@ const referenceStructuredData = [
   ogType="article"
   structuredData={referenceStructuredData}
 >
-  <article class="reference-detail py-20 sm:py-28">
+  <main id="top" class="reference-detail py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <PageIntro eyebrow="Referenz" title={entry.data.title} />
 
@@ -87,7 +87,7 @@ const referenceStructuredData = [
           />
         </aside>
 
-        <main class="reference-detail__content" data-reveal>
+        <div class="reference-detail__content" data-reveal>
           <div class="reference-detail__content-shell rounded-[2.3rem] border border-slate-200/85 bg-white/92 px-7 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur sm:px-10 sm:py-10 lg:px-12 lg:py-12">
             <a href={projectsHref} class="reference-detail__back inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500 transition hover:text-blue-600">
               <span aria-hidden="true">←</span>
@@ -105,8 +105,8 @@ const referenceStructuredData = [
             <Fragment set:html={html} />
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
-  </article>
+  </main>
 </BaseLayout>

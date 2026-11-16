@@ -55,12 +55,12 @@ const serviceStructuredData = [
   ogImage={entry.data.image}
   structuredData={serviceStructuredData}
 >
-  <article class="bg-slate-50 py-20 sm:py-28">
+  <main id="top" class="bg-slate-50 py-20 sm:py-28">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <PageIntro eyebrow="Leistungsfeld" title={entry.data.title} text={entry.data.summary} />
 
       <div class="grid grid-cols-1 gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-start">
-        <main class="space-y-8" data-reveal>
+        <div class="space-y-8" data-reveal>
           {entry.data.image && (
             <div class="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
               <Image src={entry.data.image} alt={entry.data.title} class="h-full w-full object-cover" />
@@ -73,7 +73,7 @@ const serviceStructuredData = [
               <Fragment set:html={html} />
             </div>
           </div>
-        </main>
+        </div>
 
         <aside class="space-y-6" data-reveal>
           <div class="rounded-[2rem] bg-slate-950 p-8 text-white shadow-[0_24px_60px_rgba(2,6,23,0.18)]">
@@ -102,5 +102,5 @@ const serviceStructuredData = [
         </aside>
       </div>
     </div>
-  </article>
+  </main>
 </BaseLayout>

@@ -2183,3 +2183,54 @@ html.reduced-motion .site-nav, html.reduced-motion .site-nav__bar { transition: 
 /* Dunkel: auch der volle Streifen hinter der Insel entfällt */
 html[data-theme="dark"][data-scrolled] .site-nav { background: transparent !important; border-color: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
 html[data-theme="dark"] .site-nav .site-logo { filter: brightness(0) invert(1); mix-blend-mode: normal; }
+
+/* Fußbereich: dunkle Tinte in Hell und Dunkel, Kontrast >= 7:1 */
+html[data-theme="dark"] footer.fx, html.high-contrast footer.fx { background: #0c0c0b; }
+.fx { background: #111110; color: #f4f3f0; margin-top: 0; padding: clamp(4rem, 8vw, 6rem) 0 2rem; }
+.fx-wrap { width: min(100% - 3rem, 80rem); margin-inline: auto; }
+.fx-top { display: grid; gap: 3rem; padding-bottom: 3.5rem; border-bottom: 1px solid rgba(244, 243, 240, .2); }
+@media (min-width: 900px) { .fx-top { grid-template-columns: 1.6fr 1fr 1.2fr; gap: 4rem; } }
+.fx-logo { display: inline-block; background: #fff; padding: .6rem .9rem; }
+.fx-logo img { height: 2.5rem; width: auto; filter: none; mix-blend-mode: normal; }
+.fx-name { font-family: var(--font-display); font-size: 1.6rem; }
+.fx-desc { margin: 1.5rem 0 0; max-width: 34rem; line-height: 1.6; color: #cfcdc8; }
+.fx-social { display: flex; flex-wrap: wrap; gap: 1.25rem; list-style: none; margin: 1.5rem 0 0; padding: 0; }
+.fx-h { font-family: var(--font-display); font-weight: 450; font-size: 1.25rem; letter-spacing: -.008em; margin: 0 0 1.25rem; color: #fff; }
+.fx-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+.fx address { font-style: normal; display: grid; gap: .75rem; }
+.fx-addr { margin: 0; white-space: pre-line; color: #cfcdc8; line-height: 1.55; }
+.fx a { color: #f4f3f0; text-decoration: none; background-image: linear-gradient(currentColor, currentColor); background-size: 0 1px; background-position: 0 100%; background-repeat: no-repeat; transition: background-size .25s ease, color .2s ease; }
+.fx a:hover, .fx a:focus-visible { background-size: 100% 1px; color: #fff; }
+.fx a[aria-current="page"] { color: #9db3ff; }
+.fx a:focus-visible { outline: 3px solid #9db3ff; outline-offset: 3px; }
+.fx-legal { display: flex; flex-wrap: wrap; gap: 1rem 2rem; align-items: center; justify-content: space-between; padding-top: 1.75rem; font-size: .875rem; color: #cfcdc8; }
+.fx-legal ul { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; list-style: none; margin: 0; padding: 0; }
+@media (prefers-reduced-motion: reduce) { .fx a { transition: none; } }
+
+/* Kontrast */
+html[data-theme="dark"] .hx-btn--primary { color: #0c0c0b; }
+html[data-theme="dark"] .hx-btn--primary:hover { background: #a9bcff; }
+html:not([data-theme="dark"]) .text-slate-400 { color: #6b6a66; }
+html[data-theme="dark"] .text-blue-600, html[data-theme="dark"] .text-blue-500 { color: #8aa4ff; }
+.fx nav, .fx address { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0; }
+
+/* Referenzen ohne Foto: ruhige Fläche mit technischem Raster statt bunter Verläufe; Kategorien einheitlich */
+.reference-card__placeholder, .reference-card__placeholder--hochbau, .reference-card__placeholder--tiefbau,
+.reference-card__placeholder--industrie, .reference-card__placeholder--bruecken, .reference-card__placeholder--sonderprojekte {
+  background: #ecebe7;
+}
+html[data-theme="dark"] .reference-card__placeholder { background: #1b1b19; }
+.reference-card__placeholder-grid {
+  background-image: linear-gradient(to right, rgba(17, 17, 16, .09) 1px, transparent 1px), linear-gradient(to bottom, rgba(17, 17, 16, .09) 1px, transparent 1px);
+  mask-image: none; opacity: 1;
+}
+html[data-theme="dark"] .reference-card__placeholder-grid { background-image: linear-gradient(to right, rgba(244, 243, 240, .08) 1px, transparent 1px), linear-gradient(to bottom, rgba(244, 243, 240, .08) 1px, transparent 1px); }
+.reference-card__placeholder-code { font-weight: 450; letter-spacing: -.02em; color: #111110; text-shadow: none; }
+html[data-theme="dark"] .reference-card__placeholder-code { color: #f4f3f0; }
+.reference-card__category, .reference-card__category--hochbau, .reference-card__category--tiefbau, .reference-card__category--industrie,
+.reference-card__category--bruecken, .reference-card__category--sonderprojekte,
+html[data-theme="dark"] .reference-card__category, html[data-theme="dark"] .reference-card__category--hochbau, html[data-theme="dark"] .reference-card__category--tiefbau,
+html[data-theme="dark"] .reference-card__category--industrie, html[data-theme="dark"] .reference-card__category--bruecken, html[data-theme="dark"] .reference-card__category--sonderprojekte {
+  background: #fff; color: #111110; border: 1px solid rgba(17, 17, 16, .18); text-transform: none; letter-spacing: 0; font-size: .8125rem; font-weight: 500;
+}
+html[data-theme="dark"] .reference-card__category { background: #0c0c0b; color: #f4f3f0; border-color: rgba(244, 243, 240, .25); }

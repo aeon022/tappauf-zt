@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContactBlock from '../../components/blocks/ContactBlock.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -27,14 +27,14 @@ const contactStructuredData = {
   description="Kontakt zur Tappauf ZT GmbH in Graz fuer Anfragen zu Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau."
   structuredData={contactStructuredData}
 >
-  <main class="bg-slate-50 py-20 sm:py-28">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <main id="top">
+    <div class="hx hx-sub hx-sub--tight"><div class="hx-wrap">
       <PageIntro
         eyebrow="Kontakt"
         title="Direkter Kontakt nach Graz."
         text="Kontaktinformationen, Standort in Graz und direkte Ansprechmöglichkeit für Anfragen zu Projekten und Zusammenarbeit."
       />
-    </div>
+    </div></div>
 
     <ContactBlock
       title={settings?.data.siteTitle || ''}

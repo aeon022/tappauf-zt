@@ -1,7 +1,8 @@
 ---
 // Dateipfad: frontend/src/layouts/BaseLayout.astro
-import { getCollection, getEntry } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getCollection, getEntry } from '../lib/content';
+import Notice from '../components/Notice.astro';
+import Image from '../components/ui/Img.astro';
 import { ClientRouter } from 'astro:transitions';
 import { withBase } from '../lib/withBase';
 import { hasReferenceContent } from '../lib/referenceContent';
@@ -337,8 +338,8 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
       <div class="site-pattern__pulse site-pattern__pulse--two"></div>
     </div>
 
-    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
-      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+    <nav class="site-nav sticky top-0 z-50 border-b border-slate-200 bg-white">
+      <div class="site-nav__bar max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <a href={homeHref} class="font-display text-xl font-semibold tracking-[-0.02em] uppercase group">
           {settings?.data.logo ? (
             <Image
@@ -352,7 +353,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             <>Tappauf<span class="text-blue-600 group-hover:text-slate-900 transition-colors">.ZT</span></>
           )}
         </a>
-        <div class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em]">
+        <div class="hidden md:flex gap-6 lg:gap-9 text-[15px] font-medium">
           {primaryNavLinks.map((item) => (
             <a
               href={item.href}
@@ -372,10 +373,11 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             class="command-trigger hidden xl:inline-flex"
             data-site-command-open
             aria-label="Suche öffnen"
-            title="Suche öffnen"
+            aria-keyshortcuts="/ Control+K Meta+K"
+            title="Suche öffnen (/ oder Strg/⌘ K)"
           >
             <span class="command-trigger__label">Suche</span>
-            <span class="command-trigger__shortcut">Strg + K</span>
+            <span class="command-trigger__shortcut" aria-hidden="true">/</span>
           </button>
           <button
             type="button"
@@ -477,7 +479,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
     </div>
 
     <div class="reference-command-dialog" data-site-command-dialog aria-hidden="true" hidden>
-      <div class="reference-command-panel">
+      <div class="reference-command-panel" role="dialog" aria-modal="true" aria-labelledby="command-title" aria-describedby="command-hint">
         <div class="reference-command-head">
           <div class="flex items-center gap-4">
             {settings?.data.logo ? (
@@ -494,24 +496,34 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
               </span>
             )}
             <div>
-              <p class="text-[10px] font-mono uppercase tracking-[0.24em] text-slate-500">Command Palette</p>
+              <p id="command-title" class="text-[10px] font-mono uppercase tracking-[0.24em] text-slate-500">Suche und Schnellzugriff</p>
               <p class="mt-1 text-sm text-slate-600">Direkter Zugriff auf Inhalte, Kontakt und Bedienoptionen.</p>
             </div>
           </div>
-          <button type="button" class="reference-command-close" data-site-command-close aria-label="Suche schließen">Esc</button>
+          <button type="button" class="reference-command-close" data-site-command-close aria-label="Suche schließen (Escape)">Esc</button>
         </div>
         <label class="reference-command-input">
           <span class="text-slate-400" aria-hidden="true">&gt;</span>
+          <span class="sr-only">Suchbegriff</span>
           <input
-            type="search"
+            type="text"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="command-results"
+            aria-autocomplete="list"
+            enterkeyhint="go"
             placeholder="Suche nach Leistungen, Referenzen, Jobs, Team oder Publikationen"
             autocomplete="off"
+            autocapitalize="off"
             spellcheck="false"
             data-site-command-input
           />
         </label>
-        <p class="mt-4 text-xs leading-6 text-slate-500">
-          Mit `Strg + K` öffnet die Palette. Suche startet nach Eingabe. `Enter` öffnet den ersten Treffer, `Esc` schließt die Palette.
+        <p id="command-hint" class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs leading-6 text-slate-500">
+          <span><kbd class="reference-command-kbd">↑</kbd> <kbd class="reference-command-kbd">↓</kbd> auswählen</span>
+          <span><kbd class="reference-command-kbd">Enter</kbd> öffnen</span>
+          <span><kbd class="reference-command-kbd">Esc</kbd> schließen</span>
+          <span class="sm:ml-auto">Öffnen mit <kbd class="reference-command-kbd">/</kbd> oder <kbd class="reference-command-kbd">Strg/⌘ K</kbd></span>
         </p>
         <div class="reference-command-tools mt-5 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
           <div class="reference-command-utility-grid">
@@ -529,19 +541,21 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             </button>
           </div>
           <div class="reference-command-contact">
-            <p class="reference-command-contact__label">Kontakt direkt aus dem CMS</p>
+            <p class="reference-command-contact__label">Kontakt direkt</p>
             <a href={`mailto:${settings?.data.email}`} class="reference-command-contact__link">{settings?.data.email}</a>
             <a href={footerPhoneHref} class="reference-command-contact__link">{settings?.data.phone}</a>
             <p class="reference-command-contact__address">{settings?.data.address}</p>
           </div>
         </div>
-        <div class="mt-5" data-site-command-results></div>
+        <div class="mt-5 reference-command-list" id="command-results" role="listbox" aria-label="Ergebnisse" data-site-command-results></div>
+        <p class="sr-only" role="status" aria-live="polite" data-site-command-status></p>
         <p class="reference-command-empty" data-site-command-empty hidden>Keine passenden Einträge gefunden.</p>
       </div>
     </div>
 
     {!isKeystaticRoute && (
-      <div class="cookie-notice" data-cookie-notice hidden>
+      <Notice />
+      <div class="cookie-notice" data-cookie-notice role="region" aria-label="Cookie-Hinweis" hidden>
         <div class="cookie-notice__panel">
           <p class="cookie-notice__eyebrow">Cookie-Hinweis</p>
           <h2 class="cookie-notice__title">Klare Einstellungen für lokale Speicherung und externe Inhalte.</h2>
@@ -558,71 +572,51 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
       </div>
     )}
 
-    <footer class="bg-slate-800 text-white pt-24 pb-12 mt-20">
-      <div class="max-w-7xl mx-auto grid grid-cols-1 gap-16 border-b border-white/10 px-6 pb-20 md:grid-cols-4">
-        <div class="col-span-2">
-          <div class="mb-6">
+    <footer class="fx" aria-label="Fußbereich">
+      <div class="fx-wrap fx-top">
+        <div class="fx-brand">
+          <a href={homeHref} class="fx-logo" aria-label={settings?.data.siteTitle || 'Startseite'}>
             {settings?.data.logo ? (
-              <Image
-                src={settings.data.logo}
-                alt={settings?.data.logoAlt || settings?.data.siteTitle || 'Logo'}
-                class="site-logo site-logo--footer h-12 w-auto object-contain"
-                loading="lazy"
-                decoding="async"
-              />
+              <Image src={settings.data.logo} alt={settings?.data.logoAlt || settings?.data.siteTitle || 'Logo'} class="site-logo site-logo--footer" loading="lazy" decoding="async" />
             ) : (
-              <div class="font-display text-2xl font-semibold uppercase tracking-[-0.02em]">{settings?.data.siteTitle}</div>
+              <span class="fx-name">{settings?.data.siteTitle}</span>
             )}
-          </div>
-          <p class="text-slate-400 max-w-sm leading-relaxed text-sm">
-            {settings?.data.siteDescription}
-          </p>
+          </a>
+          <p class="fx-desc">{settings?.data.siteDescription}</p>
           {socialLinks.length > 0 && (
-            <div class="mt-6 flex flex-wrap gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <ul class="fx-social">
               {socialLinks.map((item) => (
-                <a href={item.href} target="_blank" rel="noreferrer" class="hover:text-white">{item.label}</a>
+                <li><a href={item.href} target="_blank" rel="noreferrer">{item.label}</a></li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
-        <div>
-          <h4 class="mb-6 text-xs font-mono uppercase text-blue-500">Navigation</h4>
-          <ul class="space-y-4 text-sm font-medium">
+        <nav class="fx-col" aria-label="Seiten">
+          <h2 class="fx-h">Seiten</h2>
+          <ul>
             {primaryNavLinks.map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  class:list={['footer-nav-link', item.active ? 'footer-nav-link--active text-white' : 'text-slate-300 hover:text-blue-400']}
-                  aria-current={item.active ? 'page' : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
+              <li><a href={item.href} aria-current={item.active ? 'page' : undefined}>{item.label}</a></li>
             ))}
           </ul>
-        </div>
-        <div>
-          <h4 class="mb-6 text-xs font-mono uppercase text-blue-500">Kontakt</h4>
-          <div class="space-y-5 text-sm text-slate-400">
-            <p class="whitespace-pre-line">{settings?.data.address}</p>
-            <a href={`mailto:${settings?.data.email}`} class="block transition hover:text-white">{settings?.data.email}</a>
-            <a href={footerPhoneHref} class="block transition hover:text-white">{settings?.data.phone}</a>
-          </div>
+        </nav>
+        <div class="fx-col">
+          <h2 class="fx-h">Kontakt</h2>
+          <address>
+            <p class="fx-addr">{settings?.data.address}</p>
+            <a href={`mailto:${settings?.data.email}`}>{settings?.data.email}</a>
+            <a href={footerPhoneHref}>{settings?.data.phone}</a>
+          </address>
         </div>
       </div>
-      <div class="max-w-7xl mx-auto flex flex-col gap-6 px-6 pt-12 text-[10px] font-mono uppercase tracking-widest text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-        <span>© 2026 Tappauf ZT GmbH</span>
-        <div class="flex flex-wrap gap-6">
-          {utilityNavLinks.map((item) => (
-            <a
-              href={item.href}
-              class:list={[item.active ? 'text-white' : 'hover:text-white']}
-              aria-current={item.active ? 'page' : undefined}
-            >
-              {item.label}
-            </a>
-          ))}
-        </div>
+      <div class="fx-wrap fx-legal">
+        <span>© {new Date().getFullYear()} Tappauf ZT GmbH</span>
+        <nav aria-label="Rechtliches">
+          <ul>
+            {utilityNavLinks.map((item) => (
+              <li><a href={item.href} aria-current={item.active ? 'page' : undefined}>{item.label}</a></li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </footer>
 

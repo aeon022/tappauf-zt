@@ -1,51 +1,30 @@
 ---
-import { Image } from 'astro:assets';
+import Image from '../../components/ui/Img.astro';
 import { withBase } from '../../lib/withBase';
 
-interface ServiceEntry {
-  id: string;
-  data: {
-    title: string;
-    summary: string;
-    image?: any;
-    items: string[];
-  };
-}
-
-interface Props {
-  services: ServiceEntry[];
-  itemLimit?: number;
-}
-
+interface Props { services: any[]; itemLimit?: number }
 const { services, itemLimit } = Astro.props;
+const two = (n: number) => String(n).padStart(2, '0');
 ---
-
-<div class="mt-12 grid gap-6 lg:grid-cols-3">
-  {services.map((service) => (
-    <article class="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl" data-reveal>
-      {service.data.image && (
-        <div class="aspect-[16/10] overflow-hidden">
-          <Image
-            src={service.data.image}
-            alt={service.data.title}
-            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            loading="lazy"
-            widths={[320, 480, 640]}
-            sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
-            quality={76}
-          />
+<ol class="hx-rows hx-rows--stack">
+  {services.map((service, i) => (
+    <li>
+      <article class="hx-svc">
+        <span class="hx-row__n">{two(i + 1)}</span>
+        <div class="hx-svc__body">
+          <h2 class="hx-row__title"><a href={withBase(`/leistungen/${service.id}`)}>{service.data.title}</a></h2>
+          <p class="hx-row__text">{service.data.summary}</p>
+          {service.data.items?.length > 0 && (
+            <ul class="hx-tags">
+              {(typeof itemLimit === 'number' ? service.data.items.slice(0, itemLimit) : service.data.items).map((item: string) => <li>{item}</li>)}
+            </ul>
+          )}
+          <a class="hx-link" href={withBase(`/leistungen/${service.id}`)}>Mehr zu {service.data.title}</a>
         </div>
-      )}
-      <div class="flex flex-1 flex-col p-7">
-        <h3 class="text-2xl font-semibold tracking-[-0.02em] text-slate-950">{service.data.title}</h3>
-        <p class="mt-4 text-sm leading-7 text-slate-600">{service.data.summary}</p>
-        <ul class="mt-5 space-y-2 text-sm text-slate-700">
-          {(typeof itemLimit === 'number' ? service.data.items.slice(0, itemLimit) : service.data.items).map((item) => (
-            <li class="flex gap-3"><span class="mt-1 h-2 w-2 rounded-full bg-blue-500"></span><span>{item}</span></li>
-          ))}
-        </ul>
-        <a href={withBase(`/leistungen/${service.id}`)} class="mt-14 inline-flex text-sm font-semibold uppercase tracking-[0.2em] text-blue-600 transition hover:text-slate-950">Mehr Informationen</a>
-      </div>
-    </article>
+        {service.data.image && (
+          <div class="hx-svc__img"><Image src={service.data.image} alt="" widths={[480, 768, 960]} sizes="(min-width: 1024px) 36vw, 90vw" loading="lazy" decoding="async" /></div>
+        )}
+      </article>
+    </li>
   ))}
-</div>
+</ol>

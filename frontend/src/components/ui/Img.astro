@@ -1,0 +1,18 @@
+---
+// Bild aus der Lander-Mediathek in passenden Größen (WebP, <img srcset>). Ersetzt astro:assets/Image.
+import { LANDER } from '../../lib/content';
+const { src, alt = '', widths = [480, 800, 1200], sizes, class: cls, ...rest } = Astro.props;
+delete rest.quality; delete rest.format;
+const url = (w: number) => `${LANDER}/api/public/media/${src.id}?w=${w}&fmt=webp`;
+const resize = Boolean(src?.id) && !/\.svg$/i.test(src?.url ?? '');
+---
+{src && (
+  <img
+    src={resize ? url(widths[Math.min(1, widths.length - 1)]) : src.url}
+    srcset={resize ? widths.map((w: number) => `${url(w)} ${w}w`).join(', ') : undefined}
+    sizes={resize ? (sizes ?? '(min-width: 1024px) 40vw, 90vw') : undefined}
+    alt={alt}
+    class={cls}
+    {...rest}
+  />
+)}

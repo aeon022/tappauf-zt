@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PublicationList from '../../components/blocks/PublicationList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -28,8 +28,8 @@ const publicationsStructuredData = {
   description="Fachbeitraege, wissenschaftliche Arbeiten und technische Publikationen zu Tragwerksplanung, Baudynamik und Erschuetterungsschutz."
   structuredData={publicationsStructuredData}
 >
-  <main class="bg-slate-50 py-20 sm:py-28">
-    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+  <main id="top" class="hx hx-sub">
+    <div class="hx-wrap">
       <PageIntro
         eyebrow="Publikationen"
         title="Fachbeitraege und wissenschaftliche Arbeiten."

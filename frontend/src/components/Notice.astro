@@ -1,0 +1,39 @@
+---
+import { getEntry, markdown, istLive, LANDER, type Hinweis } from '../lib/content';
+import { withBase } from '../lib/withBase';
+// Zwei Hinweise aus Lander: «urlaub» (Schließzeiten, steht vorn) und «hinweis» (Neuigkeit), je mit «ab/bis».
+// Pille und Pop-up stehen im Quelltext (ohne JS lesbar); hinweis.js holt sie zur Laufzeit neu, ein neuer Text greift ohne Neubau.
+const urlaub = (await getEntry('urlaub'))?.data as Hinweis | undefined;
+const status = (await getEntry('hinweis'))?.data as Hinweis | undefined;
+const live = [urlaub, status].filter((h) => istLive(h)) as Hinweis[];
+const erste = live[0];
+const mitText = live.filter((h) => h.text || (h.cta && h.href));
+const KLASSE = 'flex min-h-12 items-center gap-2 whitespace-nowrap rounded-full py-2 pl-4 pr-2 text-[0.8125rem] font-semibold tracking-wide text-white no-underline transition hover:text-blue-300 sm:gap-3 sm:pl-6 sm:pr-3 sm:text-sm';
+const KNOPF = 'inline-flex rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white no-underline transition hover:bg-blue-500';
+---
+<div id="hinweis-bar" data-lander={LANDER} hidden={!erste} class="fixed inset-x-0 top-[5.5rem] z-40 flex justify-center px-4 lg:inset-x-auto lg:bottom-5 lg:left-6 lg:top-auto">
+  <div class="flex items-center rounded-full bg-slate-950 text-white ring-1 ring-white/25 shadow-[0_10px_40px_-10px_rgba(2,6,23,0.6)]">
+    <span id="hinweis-pille">
+      {erste && (erste.href
+        ? <a href={erste.href} class={KLASSE}><span>{erste.title}</span>{erste.cta && <><span aria-hidden="true">·</span><span class="underline underline-offset-4">{erste.cta}</span></>}</a>
+        : <button type="button" data-hinweis-auf class={KLASSE}><span>{erste.title}</span>{mitText.length > 0 && <><span aria-hidden="true">·</span><span class="underline underline-offset-4">Mehr</span></>}</button>)}
+    </span>
+    <button type="button" data-hinweis-zu class="mr-1.5 grid size-9 place-items-center rounded-full text-lg leading-none text-white/80 transition hover:bg-white/15 hover:text-white" aria-label="Hinweis ausblenden">×</button>
+  </div>
+</div>
+<dialog id="hinweis-dialog" aria-labelledby="hinweis-titel" class="m-auto max-h-[90vh] w-[min(92vw,38rem)] overflow-y-auto rounded-3xl bg-white p-0 text-slate-900 backdrop:bg-slate-950/60">
+  <form method="dialog" class="p-8 md:p-10">
+    <p class="mb-5 text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">Hinweis</p>
+    <div id="hinweis-liste" class="space-y-10">
+      {mitText.map((h, i) => (
+        <article>
+          <h2 id={i === 0 ? 'hinweis-titel' : undefined} class="mb-4 text-2xl font-semibold tracking-[-0.02em]">{h.title}</h2>
+          {h.text && <div class="prose prose-slate" set:html={markdown(h.text)} />}
+          {h.cta && h.href && <p class="mt-6"><a href={h.href} class={KNOPF}><span>{h.cta}</span></a></p>}
+        </article>
+      ))}
+    </div>
+    <div class="mt-8"><button class={KNOPF} autofocus>Schließen</button></div>
+  </form>
+</dialog>
+<script is:inline defer src={withBase('/hinweis.js')}></script>

@@ -1,35 +1,16 @@
 ---
-interface Item {
-  label: string;
-  value?: string;
-  href?: string;
-}
-
-interface Props {
-  title: string;
-  items: Item[];
-  inverse?: boolean;
-}
-
-const { title, items, inverse = false } = Astro.props;
+interface Item { label: string; value?: string; href?: string }
+interface Props { title: string; items: Item[]; inverse?: boolean }
+const { title, items } = Astro.props;
 const filtered = items.filter((item) => item.value);
 ---
-
-<aside
-  class:list={[
-    'rounded-[2rem] p-8 shadow-sm',
-    inverse ? 'border border-white/10 bg-white/5 backdrop-blur text-white' : 'meta-list bg-white text-slate-700',
-  ]}
-  data-reveal
->
-  <h2 class:list={['text-sm font-semibold uppercase tracking-[0.25em]', inverse ? 'text-slate-400' : 'text-slate-500']}>{title}</h2>
-  <dl class="mt-7 space-y-0 text-sm">
+<aside class="hx-meta" aria-label={title}>
+  <h2 class="hx-h3">{title}</h2>
+  <dl>
     {filtered.map((item) => (
-      <div class:list={['meta-list__row py-5', inverse ? 'border-white/10' : 'border-slate-200/85']}>
-        <dt class:list={['text-[11px] font-semibold uppercase tracking-[0.24em]', inverse ? 'text-slate-500' : 'text-slate-400']}>{item.label}</dt>
-        <dd class:list={['mt-3 text-base font-semibold leading-7', inverse ? 'text-white' : 'text-slate-900']}>
-          {item.href ? <a href={item.href} class:list={[inverse ? 'text-blue-300 hover:text-white' : 'text-blue-600 hover:text-slate-900']}>{item.value}</a> : item.value}
-        </dd>
+      <div>
+        <dt>{item.label}</dt>
+        <dd>{item.href ? <a href={item.href}>{item.value}</a> : item.value}</dd>
       </div>
     ))}
   </dl>

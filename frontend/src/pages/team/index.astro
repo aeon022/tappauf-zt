@@ -1,6 +1,6 @@
 ---
 // Dateipfad: frontend/src/pages/team/index.astro
-import { getCollection } from 'astro:content';
+import { getCollection } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TeamGrid from '../../components/blocks/TeamGrid.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -28,8 +28,9 @@ const teamStructuredData = {
   description="Das Team der Tappauf ZT GmbH in Graz: Expertise in Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau."
   structuredData={teamStructuredData}
 >
-  <main class="mx-auto max-w-7xl px-6 py-20 sm:py-28">
-    <PageIntro eyebrow="Team" title="Expertise im Team." text="Ein interdisziplinäres Team aus Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau." />
+  <main id="top" class="hx hx-sub">
+    <div class="hx-wrap"><PageIntro eyebrow="Team" title="Expertise im Team." text="Ein interdisziplinäres Team aus Tragwerksplanung, Baudynamik und konstruktivem Ingenieurbau." />
     <TeamGrid team={team} roomy={true} />
+  </div>
   </main>
 </BaseLayout>

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection } from '../lib/content';
 import { hasReferenceContent } from '../lib/referenceContent';
 
 export const prerender = true;

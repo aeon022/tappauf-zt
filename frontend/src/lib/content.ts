@@ -10,7 +10,7 @@ export type Entry = { id: string; data: any; body: string };
 const cache = new Map<string, Promise<any>>();
 const get = (name: string) => {
   if (!LANDER) throw new Error('PUBLIC_LANDER_URL fehlt (Adresse von Lander, z. B. https://redaktion.tappauf-zt.at). Siehe README.');
-  if (!cache.has(name)) {
+  if (import.meta.env.DEV || !cache.has(name)) {
     cache.set(name, fetch(`${LANDER}/api/public/${name}`).then((r) => {
       if (!r.ok) throw new Error(`Lander ${name}: HTTP ${r.status}`);
       return r.json();
@@ -40,3 +40,9 @@ export async function getEntry(name: string, id?: string): Promise<Entry | undef
 
 marked.use({ renderer: { html: () => '' } }); // rohes HTML aus dem Editor wird verworfen
 export const markdown = (md = '') => marked.parse(md, { async: false }) as string;
+
+export type Hinweis = { active?: boolean; from?: string; until?: string; title?: string; text?: string; cta?: string; href?: string; popup?: boolean };
+/** Heute als YYYY-MM-DD in Wiener Zeit. */
+export const heute = () => new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Vienna' });
+/** Hinweis ist sichtbar: eingeschaltet, mit Titel, und heute zwischen «ab» und «bis» (beide inklusive, optional). */
+export const istLive = (h: Hinweis | null | undefined, t = heute()) => !!h && !!h.active && !!h.title && (!h.from || h.from <= t) && (!h.until || h.until >= t);

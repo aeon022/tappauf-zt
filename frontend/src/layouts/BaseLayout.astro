@@ -1,6 +1,7 @@
 ---
 // Dateipfad: frontend/src/layouts/BaseLayout.astro
 import { getCollection, getEntry } from '../lib/content';
+import Notice from '../components/Notice.astro';
 import Image from '../components/ui/Img.astro';
 import { ClientRouter } from 'astro:transitions';
 import { withBase } from '../lib/withBase';
@@ -541,6 +542,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
     </div>
 
     {!isKeystaticRoute && (
+      <Notice />
       <div class="cookie-notice" data-cookie-notice hidden>
         <div class="cookie-notice__panel">
           <p class="cookie-notice__eyebrow">Cookie-Hinweis</p>

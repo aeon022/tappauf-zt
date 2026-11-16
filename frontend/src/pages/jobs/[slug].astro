@@ -69,11 +69,11 @@ const jobStructuredData = [
   structuredData={jobStructuredData}
   noindex={entry.data.status === 'archiviert'}
 >
-  <main id="top" class="bg-slate-50 py-20 sm:py-28">
-    <div class="mx-auto max-w-5xl px-6 lg:px-8">
+  <main id="top" class="hx hx-sub">
+    <div class="hx-wrap">
+      <a class="hx-back" href={withBase('/jobs')}><span aria-hidden="true">←</span> Alle Jobs</a>
       <PageIntro eyebrow="Jobs" title={entry.data.title} text={entry.data.summary} />
-
-      <div class="mt-12 grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+      <div class="hx-detail">
         <MetaList
           title="Rahmendaten"
           items={[
@@ -84,11 +84,9 @@ const jobStructuredData = [
             { label: 'Bewerbung', value: entry.data.applyEmail, href: entry.data.applyEmail ? `mailto:${entry.data.applyEmail}` : undefined },
           ]}
         />
-
-        <div data-reveal>
-          <div class="jobs-content prose prose-slate prose-lg max-w-none">
-            <Fragment set:html={html} />
-          </div>
+        <div>
+          <div class="hx-article"><Fragment set:html={html} /></div>
+          {entry.data.applyEmail && <p class="hx-actions"><a class="hx-btn hx-btn--primary" href={`mailto:${entry.data.applyEmail}`}>Jetzt bewerben</a></p>}
         </div>
       </div>
     </div>

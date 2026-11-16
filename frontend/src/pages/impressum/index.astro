@@ -8,8 +8,8 @@ const phoneHref = `tel:${(settings?.data.phone || '').replace(/[^+\d]/g, '')}`;
 ---
 
 <BaseLayout title="Impressum | Tappauf ZT" description="Impressum der Tappauf ZT GmbH mit Unternehmens- und Kontaktdaten." noindex={true}>
-  <main class="bg-slate-50 py-20 sm:py-28">
-    <div class="mx-auto max-w-6xl px-6 lg:px-8">
+  <main id="top" class="hx hx-sub hx-legal">
+    <div class="hx-wrap">
       <PageIntro
         eyebrow="Rechtliches"
         title="Impressum"

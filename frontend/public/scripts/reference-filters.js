@@ -61,12 +61,6 @@
       chips.forEach((chip) => {
         const active = chip.dataset.referenceFilter === value;
         chip.classList.toggle('reference-filter-chip--active', active);
-        chip.classList.toggle('border-slate-900', active);
-        chip.classList.toggle('bg-slate-900', active);
-        chip.classList.toggle('text-white', active);
-        chip.classList.toggle('border-slate-200', !active);
-        chip.classList.toggle('bg-white', !active);
-        chip.classList.toggle('text-slate-700', !active);
         chip.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
 

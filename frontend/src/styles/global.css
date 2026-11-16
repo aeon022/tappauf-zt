@@ -2180,3 +2180,6 @@ html[data-scrolled] .site-nav__bar .nav-link { font-size: 14px; }
 @media (max-width: 1023px) { html[data-scrolled] .site-nav__bar { width: calc(100% - 1rem); } }
 @media (prefers-reduced-motion: reduce) { .site-nav, .site-nav__bar { transition: none; } }
 html.reduced-motion .site-nav, html.reduced-motion .site-nav__bar { transition: none; }
+/* Dunkel: auch der volle Streifen hinter der Insel entfällt */
+html[data-theme="dark"][data-scrolled] .site-nav { background: transparent !important; border-color: transparent !important; box-shadow: none !important; -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-theme="dark"] .site-nav .site-logo { filter: brightness(0) invert(1); mix-blend-mode: normal; }

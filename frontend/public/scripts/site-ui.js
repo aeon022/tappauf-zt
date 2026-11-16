@@ -549,12 +549,17 @@
     }
     window.__tappaufGlobalCommandHandler = (event) => {
       const dialog = document.querySelector('[data-site-command-dialog]');
-      if (!dialog || event.defaultPrevented || event.isComposing) return;
+      if (!dialog || event.isComposing) return;
       const open = dialog.getAttribute('aria-hidden') === 'false';
       const target = event.target;
       const typing = target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
       const isK = (event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && event.key.toLowerCase() === 'k';
       const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !typing;
+      if (event.key === 'Escape' && open) {
+        event.preventDefault();
+        document.querySelector('[data-site-command-close]')?.click();
+        return;
+      }
       if ((isK || isSlash) && !open) {
         event.preventDefault();
         window.__tappaufOpenCommandPalette?.();

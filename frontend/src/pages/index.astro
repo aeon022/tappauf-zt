@@ -1,138 +1,165 @@
 ---
 import { getCollection, getEntry } from '../lib/content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import HeroBlock from '../components/blocks/HeroBlock.astro';
 import ContactBlock from '../components/blocks/ContactBlock.astro';
-import PartnerLogoSlider from '../components/blocks/PartnerLogoSlider.astro';
-import ReferencePreviewGrid from '../components/blocks/ReferencePreviewGrid.astro';
-import ServiceGrid from '../components/blocks/ServiceGrid.astro';
-import TeamGrid from '../components/blocks/TeamGrid.astro';
-import SectionHeader from '../components/ui/SectionHeader.astro';
-import adlerImage from '../assets/references/Adler.png';
+import Image from '../components/ui/Img.astro';
 import { withBase } from '../lib/withBase';
 
 const home = await getEntry('home', 'startseite');
 const settings = await getEntry('settings', 'global');
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-const team = (await getCollection('team')).sort((a, b) => a.data.order - b.data.order);
-const references = (await getCollection('references')).sort((a, b) => a.data.order - b.data.order);
-const partners = (await getCollection('partners')).sort((a, b) => a.data.order - b.data.order);
-
-const featuredServices = services.slice(0, 6);
-const featuredTeam = team.slice(0, 4);
-const featuredReferences = references.slice(0, 8);
-const leistungenHref = withBase('/leistungen');
-const teamHref = withBase('/team');
-const projekteHref = withBase('/projekte');
+const byOrder = (a: any, b: any) => a.data.order - b.data.order;
+const services = (await getCollection('services')).sort(byOrder);
+const team = (await getCollection('team')).sort(byOrder).slice(0, 4);
+const references = (await getCollection('references')).sort(byOrder).slice(0, 8);
+const partners = (await getCollection('partners')).sort(byOrder);
+const d = home?.data ?? {};
+const categoryLabels: Record<string, string> = { hochbau: 'Hochbau', tiefbau: 'Tiefbau', industrie: 'Industriebau', bruecken: 'Brückenbau', sonderprojekte: 'Sonderprojekte' };
+const two = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout
   title={`${settings?.data.siteTitle} | Tragwerksplanung und Baudynamik in Graz`}
   description={settings?.data.metaDescription}
-  ogImage={home?.data.heroImage}
+  ogImage={d.heroImage}
 >
-  <main>
-    <HeroBlock
-      eyebrow={home?.data.heroEyebrow || ''}
-      headline={home?.data.heroHeadline || ''}
-      text={home?.data.heroText || ''}
-      image={home?.data.heroImage}
-      imageAlt={home?.data.heroImageAlt}
-      primaryLabel={home?.data.heroPrimaryLabel || ''}
-      primaryHref={withBase(home?.data.heroPrimaryHref || '/leistungen')}
-      secondaryLabel={home?.data.heroSecondaryLabel || ''}
-      secondaryHref={withBase(home?.data.heroSecondaryHref || '/projekte')}
-      metrics={[
-        { value: '30+', label: 'Jahre Erfahrung' },
-        { value: String(services.length), label: 'Leistungsfelder' },
-      ]}
-    />
-
-    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-30">
-      <div class="rounded-[2.75rem] border border-slate-200/80 bg-white/92 px-8 py-10 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur sm:px-10 sm:py-12 lg:px-14 lg:py-16" data-reveal>
-        <div class="grid gap-14 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start">
-          <div class="min-w-0 max-w-2xl">
-            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">{home?.data.aboutTitle || 'Über uns'}</p>
-            <h2 class="mt-4 max-w-[9.5em] font-display text-[2.35rem] font-semibold leading-[1.02] tracking-[-0.03em] text-slate-950 sm:text-[2.8rem]">
-              International erfahren, technisch präzise.
-            </h2>
-            <p class="mt-8 max-w-[34rem] text-lg leading-9 text-slate-700">{home?.data.aboutText}</p>
-
-            <div class="mt-10 flex items-center gap-5 border-t border-slate-200 pt-8">
-              <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/90 p-4">
-                <img
-                  src={adlerImage.src}
-                  alt="Adler Referenzmotiv der Originalseite"
-                  class="h-auto w-20 object-contain"
-                  loading="lazy"
-                />
-              </div>
-              <p class="max-w-sm text-sm leading-7 text-slate-500">
-                Anspruchsvolle Hochbauten, Industrieanlagen und dynamisch beanspruchte Tragwerke mit internationalem Projektfokus.
-              </p>
-            </div>
+  <main id="top" class="home">
+    <!-- 1 · Hero -->
+    <section class="hx hx-hero">
+      <div class="hx-wrap hx-hero__grid">
+        <div class="hx-hero__text">
+          <p class="hx-label">{d.heroEyebrow}</p>
+          <h1 class="hx-h1">{d.heroHeadline}</h1>
+          <p class="hx-lead">{d.heroText}</p>
+          <div class="hx-actions">
+            <a class="hx-btn hx-btn--primary" href={withBase(d.heroSecondaryHref || '/projekte')}>Referenzen ansehen</a>
+            <a class="hx-btn hx-btn--secondary" href={withBase('/kontakt')}>Kontakt aufnehmen</a>
           </div>
+        </div>
+        <figure class="hx-hero__photo">
+          <Image src={d.heroImage} alt={d.heroImageAlt || ''} widths={[640, 960, 1240]} sizes="(min-width: 1024px) 56vw, 92vw" loading="eager" fetchpriority="high" decoding="async" />
+        </figure>
+      </div>
+      <dl class="hx-wrap hx-facts">
+        <div><dt>Erfahrung</dt><dd>über 30 Jahre</dd></div>
+        <div><dt>Leistungsfelder</dt><dd>{services.length}</dd></div>
+        <div><dt>Standort</dt><dd>Graz, weltweit tätig</dd></div>
+        <div><dt>Versicherung</dt><dd>inkl. USA und Kanada</dd></div>
+      </dl>
+    </section>
 
-          <div class="relative min-w-0 lg:pl-10">
-            <div class="absolute left-0 top-1 hidden h-full w-px bg-gradient-to-b from-slate-200 via-slate-300 to-transparent lg:block"></div>
-
-            <div class="min-w-0">
-              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-600">{home?.data.profileTitle || 'Profil'}</p>
-              <h3 class="mt-4 max-w-[12em] font-display text-[2.25rem] font-semibold leading-[1.04] tracking-[-0.03em] text-slate-950 sm:text-[2.65rem]">
-                {home?.data.profileHeadline || ''}
-              </h3>
-            </div>
-
-            <div class="mt-10 space-y-8">
-              <div class="border-b border-slate-200 pb-8">
-                <p class="max-w-[18rem] text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">{home?.data.approachTitle}</p>
-                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-700">{home?.data.approachText}</p>
-              </div>
-
-              <div>
-                <p class="max-w-[18rem] text-sm font-semibold uppercase tracking-[0.25em] text-slate-950">{home?.data.insuranceTitle}</p>
-                <p class="mt-4 max-w-2xl text-base leading-8 text-slate-700">{home?.data.insuranceText}</p>
-              </div>
-            </div>
+    <!-- 2 · Profil -->
+    <section class="hx hx-profile" id="profil">
+      <div class="hx-wrap hx-split">
+        <div>
+          <p class="hx-label">{d.aboutTitle || 'Über uns'}</p>
+          <h2 class="hx-h2">International erfahren, technisch präzise.</h2>
+        </div>
+        <div class="hx-prose">
+          <p class="hx-lead hx-lead--ink">{d.aboutText}</p>
+          <div class="hx-twocol">
+            <div><h3 class="hx-h3">{d.approachTitle}</h3><p>{d.approachText}</p></div>
+            <div><h3 class="hx-h3">{d.insuranceTitle}</h3><p>{d.insuranceText}</p></div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="bg-slate-50 py-24 lg:py-28">
-      <div class="mx-auto max-w-7xl px-6 lg:px-8">
-        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <SectionHeader eyebrow="Leistungen" title="Planung in klaren Leistungsbausteinen." />
-          <a href={leistungenHref} class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-950 transition hover:text-blue-600" data-reveal>Alle Leistungen</a>
+    <!-- 3 · Leistungen -->
+    <section class="hx hx-services" id="leistungen">
+      <div class="hx-wrap">
+        <div class="hx-head">
+          <div>
+            <p class="hx-label">Leistungen</p>
+            <h2 class="hx-h2">Planung in klaren Leistungsbausteinen.</h2>
+          </div>
+          <a class="hx-link" href={withBase('/leistungen')}>Alle Leistungen</a>
         </div>
-        <ServiceGrid services={featuredServices} itemLimit={3} />
+        <ol class="hx-rows">
+          {services.map((s, i) => (
+            <li>
+              <a class="hx-row" href={withBase(`/leistungen/${s.id}`)}>
+                <span class="hx-row__n">{two(i + 1)}</span>
+                <span class="hx-row__main">
+                  <span class="hx-row__title">{s.data.title}</span>
+                  <span class="hx-row__text">{s.data.summary}</span>
+                </span>
+                {s.data.image && (
+                  <span class="hx-row__img"><Image src={s.data.image} alt="" widths={[320, 480, 640]} sizes="240px" loading="lazy" decoding="async" /></span>
+                )}
+                <span class="hx-row__go" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
-    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-28">
-      <SectionHeader
-        eyebrow="Netzwerk"
-        title={home?.data.partnersTitle || 'Auftraggeber & Partner'}
-        text={home?.data.partnersText}
-      />
-      <PartnerLogoSlider partners={partners} />
-    </section>
-
-    <section class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-28">
-      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <SectionHeader eyebrow="Team" title="Menschen mit Verantwortung." />
-        <a href={teamHref} class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-950 transition hover:text-blue-600" data-reveal>Gesamtes Team</a>
-      </div>
-      <TeamGrid team={featuredTeam} dark={true} />
-    </section>
-
-    <section class="bg-slate-800 py-24 text-white lg:py-28">
-      <div class="mx-auto max-w-7xl px-6 lg:px-8">
-        <SectionHeader eyebrow="Referenzen" title={home?.data.referencesTitle || ''} text={home?.data.referencesText} inverse={true} />
-        <ReferencePreviewGrid references={featuredReferences} />
-        <div class="mt-10">
-          <a href={projekteHref} class="inline-flex rounded-full border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/50 hover:bg-white/5" data-reveal>Alle Referenzen</a>
+    <!-- 4 · Referenzen -->
+    <section class="hx hx-refs" id="referenzen">
+      <div class="hx-wrap">
+        <div class="hx-head">
+          <div>
+            <p class="hx-label">Referenzen</p>
+            <h2 class="hx-h2">{d.referencesTitle}</h2>
+          </div>
+          <a class="hx-link" href={withBase('/projekte')}>Alle Referenzen</a>
         </div>
+        <ul class="hx-ref-list">
+          {references.map((r) => (
+            <li>
+              <a href={withBase(`/projekte/${r.id}`)} class="hx-ref">
+                <span class="hx-ref__title">{r.data.title}</span>
+                <span class="hx-ref__meta">{[r.data.details || r.data.client, categoryLabels[r.data.category] ?? r.data.category, r.data.year].filter(Boolean).join(' · ')}</span>
+                <span class="hx-row__go" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5 · Partner -->
+    <section class="hx hx-partners" id="partner">
+      <div class="hx-wrap">
+        <div class="hx-head">
+          <div>
+            <p class="hx-label">Netzwerk</p>
+            <h2 class="hx-h2">{d.partnersTitle || 'Auftraggeber und Partner'}</h2>
+          </div>
+        </div>
+        <ul class="hx-logos">
+          {partners.map((p) => (
+            <li>
+              {p.data.website
+                ? <a href={p.data.website} target="_blank" rel="noreferrer" aria-label={p.data.name}><Image src={p.data.logo} alt={p.data.name} widths={[200, 320]} sizes="160px" loading="lazy" decoding="async" /></a>
+                : <Image src={p.data.logo} alt={p.data.name} widths={[200, 320]} sizes="160px" loading="lazy" decoding="async" />}
+            </li>
+          ))}
+        </ul>
+        <p class="hx-note">{d.partnersText}</p>
+      </div>
+    </section>
+
+    <!-- 6 · Team -->
+    <section class="hx hx-team" id="team">
+      <div class="hx-wrap">
+        <div class="hx-head">
+          <div>
+            <p class="hx-label">Team</p>
+            <h2 class="hx-h2">Menschen mit Verantwortung.</h2>
+          </div>
+          <a class="hx-link" href={withBase('/team')}>Gesamtes Team</a>
+        </div>
+        <ul class="hx-people">
+          {team.map((m) => (
+            <li>
+              {m.data.image && <div class="hx-people__img"><Image src={m.data.image} alt={m.data.name} widths={[360, 540, 720]} sizes="(min-width: 1024px) 22vw, 46vw" loading="lazy" decoding="async" /></div>}
+              <h3 class="hx-h3">{m.data.name}</h3>
+              <p class="hx-people__role">{m.data.role}</p>
+              {m.data.email && <a class="hx-people__mail" href={`mailto:${m.data.email}`}>{m.data.email}</a>}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
 

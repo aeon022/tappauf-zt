@@ -338,7 +338,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
       <div class="site-pattern__pulse site-pattern__pulse--two"></div>
     </div>
 
-    <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <nav class="site-nav sticky top-0 z-50 border-b border-slate-200 bg-white">
       <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <a href={homeHref} class="font-display text-xl font-semibold tracking-[-0.02em] uppercase group">
           {settings?.data.logo ? (
@@ -353,7 +353,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             <>Tappauf<span class="text-blue-600 group-hover:text-slate-900 transition-colors">.ZT</span></>
           )}
         </a>
-        <div class="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em]">
+        <div class="hidden md:flex gap-6 lg:gap-9 text-[15px] font-medium">
           {primaryNavLinks.map((item) => (
             <a
               href={item.href}

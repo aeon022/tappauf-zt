@@ -373,10 +373,11 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             class="command-trigger hidden xl:inline-flex"
             data-site-command-open
             aria-label="Suche öffnen"
-            title="Suche öffnen"
+            aria-keyshortcuts="/ Control+K Meta+K"
+            title="Suche öffnen (/ oder Strg/⌘ K)"
           >
             <span class="command-trigger__label">Suche</span>
-            <span class="command-trigger__shortcut">Strg + K</span>
+            <span class="command-trigger__shortcut" aria-hidden="true">/</span>
           </button>
           <button
             type="button"
@@ -478,7 +479,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
     </div>
 
     <div class="reference-command-dialog" data-site-command-dialog aria-hidden="true" hidden>
-      <div class="reference-command-panel">
+      <div class="reference-command-panel" role="dialog" aria-modal="true" aria-labelledby="command-title" aria-describedby="command-hint">
         <div class="reference-command-head">
           <div class="flex items-center gap-4">
             {settings?.data.logo ? (
@@ -495,24 +496,34 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
               </span>
             )}
             <div>
-              <p class="text-[10px] font-mono uppercase tracking-[0.24em] text-slate-500">Command Palette</p>
+              <p id="command-title" class="text-[10px] font-mono uppercase tracking-[0.24em] text-slate-500">Suche und Schnellzugriff</p>
               <p class="mt-1 text-sm text-slate-600">Direkter Zugriff auf Inhalte, Kontakt und Bedienoptionen.</p>
             </div>
           </div>
-          <button type="button" class="reference-command-close" data-site-command-close aria-label="Suche schließen">Esc</button>
+          <button type="button" class="reference-command-close" data-site-command-close aria-label="Suche schließen (Escape)">Esc</button>
         </div>
         <label class="reference-command-input">
           <span class="text-slate-400" aria-hidden="true">&gt;</span>
+          <span class="sr-only">Suchbegriff</span>
           <input
-            type="search"
+            type="text"
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="command-results"
+            aria-autocomplete="list"
+            enterkeyhint="go"
             placeholder="Suche nach Leistungen, Referenzen, Jobs, Team oder Publikationen"
             autocomplete="off"
+            autocapitalize="off"
             spellcheck="false"
             data-site-command-input
           />
         </label>
-        <p class="mt-4 text-xs leading-6 text-slate-500">
-          Mit `Strg + K` öffnet die Palette. Suche startet nach Eingabe. `Enter` öffnet den ersten Treffer, `Esc` schließt die Palette.
+        <p id="command-hint" class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs leading-6 text-slate-500">
+          <span><kbd class="reference-command-kbd">↑</kbd> <kbd class="reference-command-kbd">↓</kbd> auswählen</span>
+          <span><kbd class="reference-command-kbd">Enter</kbd> öffnen</span>
+          <span><kbd class="reference-command-kbd">Esc</kbd> schließen</span>
+          <span class="sm:ml-auto">Öffnen mit <kbd class="reference-command-kbd">/</kbd> oder <kbd class="reference-command-kbd">Strg/⌘ K</kbd></span>
         </p>
         <div class="reference-command-tools mt-5 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
           <div class="reference-command-utility-grid">
@@ -530,13 +541,14 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
             </button>
           </div>
           <div class="reference-command-contact">
-            <p class="reference-command-contact__label">Kontakt direkt aus dem CMS</p>
+            <p class="reference-command-contact__label">Kontakt direkt</p>
             <a href={`mailto:${settings?.data.email}`} class="reference-command-contact__link">{settings?.data.email}</a>
             <a href={footerPhoneHref} class="reference-command-contact__link">{settings?.data.phone}</a>
             <p class="reference-command-contact__address">{settings?.data.address}</p>
           </div>
         </div>
-        <div class="mt-5" data-site-command-results></div>
+        <div class="mt-5 reference-command-list" id="command-results" role="listbox" aria-label="Ergebnisse" data-site-command-results></div>
+        <p class="sr-only" role="status" aria-live="polite" data-site-command-status></p>
         <p class="reference-command-empty" data-site-command-empty hidden>Keine passenden Einträge gefunden.</p>
       </div>
     </div>

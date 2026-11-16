@@ -7,7 +7,9 @@ export const GET: APIRoute = ({ site }) => {
   const basePath = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.replace(/\/$/, '');
   const robots = `User-agent: *
 Allow: /
-Disallow: ${basePath}/keystatic/
+Disallow: ${basePath}/lander/
+Allow: ${basePath}/lander/media/
+Allow: ${basePath}/lander/api/public/media/
 
 Sitemap: ${new URL(`${basePath}/sitemap.xml`, siteUrl).toString()}
 `;

@@ -45,10 +45,7 @@ const normalizePathname = (value: string) => {
   return value !== '/' && value.endsWith('/') ? value.slice(0, -1) : value;
 };
 const currentPath = normalizePathname(Astro.url.pathname);
-const isKeystaticRoute = currentPath === normalizePathname(withBase('/keystatic')) || currentPath.startsWith(`${normalizePathname(withBase('/keystatic'))}/`);
-const [services, references, jobs, team, publications] = isKeystaticRoute
-  ? [[], [], [], [], []]
-  : await Promise.all([
+const [services, references, jobs, team, publications] = await Promise.all([
       getCollection('services'),
       getCollection('references'),
       getCollection('jobs'),
@@ -553,7 +550,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
       </div>
     </div>
 
-    {!isKeystaticRoute && (
+    <>
       <Notice />
       <div class="cookie-notice" data-cookie-notice role="region" aria-label="Cookie-Hinweis" hidden>
         <div class="cookie-notice__panel">
@@ -570,7 +567,7 @@ const siteUiScriptTag = `<script type="module">import ${JSON.stringify(withBase(
           <a href={cookiePolicyHref} class="cookie-notice__link">Cookie-Richtlinien lesen</a>
         </div>
       </div>
-    )}
+    </>
 
     <footer class="fx" aria-label="Fußbereich">
       <div class="fx-wrap fx-top">

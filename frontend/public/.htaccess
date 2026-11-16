@@ -1,4 +1,16 @@
+# tappauf-zt.at: Fehlerseite und Weiterleitungen der alten WordPress-Adressen (301)
 ErrorDocument 404 /404.html
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Lander (Redaktion) nicht anfassen
+  RewriteRule ^lander/ - [L]
+  RewriteRule ^referenzen/?$ /projekte/ [R=301,L]
+  RewriteRule ^about-us/?$ /#profil [R=301,L,NE]
+  RewriteRule ^(hello-world|home)/?$ / [R=301,L]
+  RewriteRule ^privacy-policy/?$ /datenschutz/ [R=301,L]
+  RewriteRule ^wp-(admin|login\.php|content|includes)(/.*)?$ / [R=301,L]
+  RewriteRule ^feed/?$ / [R=301,L]
+</IfModule>
 
 <IfModule mod_expires.c>
   ExpiresActive On
@@ -24,6 +36,11 @@ ErrorDocument 404 /404.html
 
   <FilesMatch "\.(svg|ico|pdf)$">
     Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+
+  # Skripte ohne Hash im Namen: kurz zwischenspeichern, damit Änderungen ankommen
+  <FilesMatch "^(hinweis|site-ui|reference-filters)\.js$">
+    Header set Cache-Control "public, max-age=3600"
   </FilesMatch>
 
   <FilesMatch "^(robots\.txt|sitemap\.xml)$">

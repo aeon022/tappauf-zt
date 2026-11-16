@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../lib/withBase';
+---
+<BaseLayout title="Seite nicht gefunden | Tappauf ZT" description="Diese Seite gibt es nicht (mehr)." noindex={true}>
+  <main id="top" class="hx hx-sub">
+    <div class="hx-wrap">
+      <header class="hx-intro">
+        <p class="hx-label">Fehler 404</p>
+        <h1 class="hx-h1 hx-h1--page">Diese Seite gibt es nicht.</h1>
+        <p class="hx-lead">Der Link ist veraltet oder falsch geschrieben. Hier geht es weiter:</p>
+      </header>
+      <div class="hx-actions">
+        <a class="hx-btn hx-btn--primary" href={withBase('/')}>Zur Startseite</a>
+        <a class="hx-btn hx-btn--secondary" href={withBase('/projekte')}>Referenzen ansehen</a>
+        <a class="hx-btn hx-btn--secondary" href={withBase('/kontakt')}>Kontakt</a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

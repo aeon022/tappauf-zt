@@ -9,13 +9,15 @@ Ein **Hinweis** (z. B. Büro geschlossen) erscheint als Leiste mit Pop-up und gr
 
 Texte, Bilder, Team, Referenzen, Leistungen, Jobs, Partner und Publikationen (mit PDF) pflegt man in Lander. Die Seite liest beim Bauen die öffentliche Lese-API (`/api/public/…`). Nach Änderungen die Seite neu bauen und hochladen.
 
+**Livegang:** Schritt für Schritt in [`docs/GOLIVE.md`](docs/GOLIVE.md).
+
 ## Bauen und hochladen
 
 ```bash
 cd frontend
 cp .env.example .env          # PUBLIC_LANDER_URL auf die Lander-Adresse setzen
 npm ci
-npm run build                 # → frontend/dist/
+node scripts/build-live.mjs      # → frontend/dist/ (Lander muss erreichbar sein)
 ```
 
 `dist/` komplett auf den Webhost laden (Wurzel der Domain). Lander muss beim Bauen erreichbar sein. Entwicklung: `npm run dev`.

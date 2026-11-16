@@ -1,6 +1,6 @@
 ---
-import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getCollection, markdown } from '../../lib/content';
+import Image from '../../components/ui/Img.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
 import { withBase } from '../../lib/withBase';
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const html = markdown(entry.body);
 const seoBase = Astro.site ?? Astro.url;
 const serviceUrl = new URL(withBase(`/leistungen/${entry.id}`), seoBase).toString();
 const contactUrl = new URL(withBase('/kontakt'), seoBase).toString();
@@ -70,7 +70,7 @@ const serviceStructuredData = [
           <div class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
             <h2 class="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Leistungsbeschreibung</h2>
             <div class="prose prose-slate prose-lg mt-6 max-w-none prose-headings:text-slate-900 prose-headings:tracking-tight prose-p:leading-relaxed prose-p:text-slate-600 prose-strong:text-slate-900 prose-strong:font-bold">
-              <Content />
+              <Fragment set:html={html} />
             </div>
           </div>
         </main>

@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, markdown } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const html = markdown(entry.body);
 const jobDescription = [entry.data.summary, entry.body]
   .filter(Boolean)
   .join(' ')
@@ -87,7 +87,7 @@ const jobStructuredData = [
 
         <main data-reveal>
           <div class="jobs-content prose prose-slate prose-lg max-w-none">
-            <Content />
+            <Fragment set:html={html} />
           </div>
         </main>
       </div>

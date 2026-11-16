@@ -1,6 +1,6 @@
 ---
-import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getCollection, markdown } from '../../lib/content';
+import Image from '../../components/ui/Img.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -18,7 +18,7 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const html = markdown(entry.body);
 const projectsHref = withBase('/projekte');
 const seoBase = Astro.site ?? Astro.url;
 const projectUrl = new URL(withBase(`/projekte/${entry.id}`), seoBase).toString();
@@ -102,7 +102,7 @@ const referenceStructuredData = [
             </div>
 
             <div class="reference-detail__prose prose prose-lg mt-10 max-w-none">
-            <Content />
+            <Fragment set:html={html} />
             </div>
           </div>
         </main>

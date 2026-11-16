@@ -1,34 +1,39 @@
-# TAPPAUF ZT - Omniscient Core (v1.0)
+# Tappauf ZT: Website
 
-Dieses Repository enthält das Full-Stack-Ökosystem für die Webpräsenz der **Tappauf ZT GmbH**. 
-Architektur-Ansatz: **"Less Noise. Nice Data. No Bloat."**
+Astro (statisch) mit **Lander** als Redaktion, wie psychiaterin-graz.at. Beides läuft auf einem normalen PHP-Webhost:
 
-## 🏗 Tech-Stack
+- **Website** = Ordner `frontend/dist/` (reine HTML/CSS/JS-Dateien), Wurzel der Domain
+- **Redaktion** = Lander, z. B. unter `https://redaktion.tappauf-zt.at` (eigene Subdomain, Document Root = `public/` von Lander)
 
-### Frontend & Core
-* **Astro v5 (Latest):** Hochperformantes Web-Framework im Hybrid-Mode.
-* **Tailwind CSS v4:** Utility-First Styling via `@tailwindcss/vite` Plugin (kein Legacy-Config-Bloat).
-* **Zod:** Strikt typisierte Content-Validierung zur Runtime.
-* **Markdoc:** Semantisches Content-Format für komplexe Dokumentstrukturen.
+Texte, Bilder, Team, Referenzen, Leistungen, Jobs, Partner und Publikationen (mit PDF) pflegt man in Lander. Die Seite liest beim Bauen die öffentliche Lese-API (`/api/public/…`). Nach Änderungen die Seite neu bauen und hochladen.
 
-### Content Management (Git-based)
-* **Keystatic:** Lokales CMS zur Verwaltung der Content-Collections ohne externe Datenbank-Abhängigkeit.
-* **Collections:** Referenzen, Team, Leistungen, Jobs und Publikationen.
+## Bauen und hochladen
 
-### DevOps & Tools
-* **Runtime:** Node.js (Standalone Mode via `@astrojs/node` Adapter).
-* **Migration:** Custom Scripts zum Parsen von WordPress-Daten via `fast-xml-parser`.
+```bash
+cd frontend
+cp .env.example .env          # PUBLIC_LANDER_URL auf die Lander-Adresse setzen
+npm ci
+npm run build                 # → frontend/dist/
+```
 
-## 📂 Projekt-Struktur
+`dist/` komplett auf den Webhost laden (Wurzel der Domain). Lander muss beim Bauen erreichbar sein. Entwicklung: `npm run dev`.
+Node ≥ 22.23.4.
 
-```text
-.
-├── frontend/               # Astro Application & Keystatic Admin
-│   ├── src/
-│   │   ├── content/        # Source of Truth (.mdoc Files)
-│   │   ├── assets/         # Managed Assets (Images, Icons)
-│   │   └── pages/          # File-based Routing
-│   ├── astro.config.mjs    # Integration-Logic (Keystatic, Tailwind v4)
-│   └── keystatic.config.mjs # CMS Schema Definitionen
-├── scripts/                # Automatisierung & Migration (WP-Import etc.)
-└── package.json            # Root-Utilities & Migration-Deps
+## Lander einrichten (einmalig)
+
+1. Lander (aktuelles Release von github.com/aeon022/lander) auf die Subdomain laden, `lander.config.php` anlegen (`public_origins` = Website-Domain, `media_url` = volle URL), `data/` und `public/media/` beschreibbar machen.
+2. Inhalte: Lokal mit `frontend/scripts/migrate-to-lander.mjs` aus den früheren Keystatic-Dateien (Git-Verlauf vor „Keystatic entfernt") übertragen und per *Einstellungen → Pod → Backup & Wiederherstellen* (ZIP mit Medien) auf dem Server einspielen.
+3. Ab Lander 0.3.1 aktualisiert sich Lander per Klick (Einstellungen → Pod, ganz unten; der Knopf erscheint nur, wenn es eine neuere Version gibt).
+
+## Sammlungen in Lander
+
+`settings` (Kontakt, Firma), `home` (Startseite), `references`, `services`, `team`, `jobs`, `partners`, `publications`. Reihenfolge über das Feld «Sortierung».
+
+## Verzeichnis
+
+```
+frontend/src/lib/content.ts      liest Lander (getCollection/getEntry), Markdown
+frontend/src/components/ui/Img.astro   Bild aus Lander in passenden Größen
+frontend/scripts/migrate-to-lander.mjs  einmalige Übernahme der alten Inhalte
+scripts/                         Altlast: WordPress-Import
+```

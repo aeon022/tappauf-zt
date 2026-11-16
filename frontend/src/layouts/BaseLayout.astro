@@ -1,7 +1,7 @@
 ---
 // Dateipfad: frontend/src/layouts/BaseLayout.astro
-import { getCollection, getEntry } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getCollection, getEntry } from '../lib/content';
+import Image from '../components/ui/Img.astro';
 import { ClientRouter } from 'astro:transitions';
 import { withBase } from '../lib/withBase';
 import { hasReferenceContent } from '../lib/referenceContent';

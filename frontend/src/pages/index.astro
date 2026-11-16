@@ -1,6 +1,5 @@
 ---
-import { getCollection, getEntry } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getCollection, getEntry } from '../lib/content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroBlock from '../components/blocks/HeroBlock.astro';
 import ContactBlock from '../components/blocks/ContactBlock.astro';
@@ -61,8 +60,8 @@ const projekteHref = withBase('/projekte');
 
             <div class="mt-10 flex items-center gap-5 border-t border-slate-200 pt-8">
               <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50/90 p-4">
-                <Image
-                  src={adlerImage}
+                <img
+                  src={adlerImage.src}
                   alt="Adler Referenzmotiv der Originalseite"
                   class="h-auto w-20 object-contain"
                   loading="lazy"

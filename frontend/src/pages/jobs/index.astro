@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection, markdown } from '../../lib/content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import MetaList from '../../components/ui/MetaList.astro';
 import PageIntro from '../../components/ui/PageIntro.astro';
@@ -10,7 +10,7 @@ const jobs = (await getCollection('jobs'))
   .filter((job) => job.data.status === 'aktiv');
 
 const singleJob = jobs.length === 1 ? jobs[0] : null;
-const singleJobRender = singleJob ? await render(singleJob) : null;
+const singleJobRender = singleJob ? { html: markdown(singleJob.body) } : null;
 ---
 
 <BaseLayout
@@ -38,7 +38,7 @@ const singleJobRender = singleJob ? await render(singleJob) : null;
             <h2 class="text-3xl font-semibold tracking-[-0.02em] text-slate-950">{singleJob.data.title}</h2>
             {singleJob.data.summary && <p class="mt-4 text-lg leading-8 text-slate-600">{singleJob.data.summary}</p>}
             <div class="jobs-content prose prose-slate prose-lg mt-8 max-w-none">
-              <singleJobRender.Content />
+              <Fragment set:html={singleJobRender.html} />
             </div>
           </div>
         </section>
